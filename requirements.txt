@@ -1,0 +1,8 @@
+Flask
+flask_socketio==5.3.6
+flask_sse
+flask-cors
+Flask-SQLAlchemy
+redis
+APScheduler
+python-dotenv
