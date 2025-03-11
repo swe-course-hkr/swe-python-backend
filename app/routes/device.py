@@ -10,17 +10,8 @@ def index(): return '👀 wat u lookin for m8'
 
 @deviceRouter.route('/device/create', methods=['POST'])
 def create_device():
-    if not request.json:
-        return Response(status=400)
-
-    try:
-        new_row = Database.add_device(**request.json)
-    except ValueError as e:
-        return Response(status=400, response=str(e))
-
-    # yeet the potatos at clients in real time :DDDDDD
-    emit_event(current_app, "device:create", new_row.toDict())
-    return Response(status=201)
+    # TODO: implement create device route
+    pass
 
 
 @deviceRouter.route('/device/<deviceId>/update', methods=['POST'])
