@@ -38,12 +38,12 @@ class Database:
     def update_device(device_id: int, **kwargs) -> int:
         kwargs["modified_at"] = datetime.now()
 
-        count = db.session.query(DeviceModel) \
+        db.session.query(DeviceModel) \
             .filter(DeviceModel.id == device_id) \
             .update(kwargs)
 
         db.session.commit()
-        return count
+        return db.session.query(DeviceModel).filter(DeviceModel.id == device_id).first()
 
 
     def add_device(**kwargs) -> DeviceModel:
