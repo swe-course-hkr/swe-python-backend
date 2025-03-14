@@ -16,8 +16,9 @@ def create_device():
 
 @deviceRouter.route('/device/<deviceId>/update', methods=['POST'])
 def update_device(deviceId):
-    # TODO: implement update device route
-    pass
+    body = request.json
+    updated_row = Database.update_device(deviceId, **body)
+    return jsonify({ "data": updated_row.toDict() })
 
 
 @deviceRouter.route('/device/<deviceId>/delete', methods=['POST'])
