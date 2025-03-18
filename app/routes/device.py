@@ -1,6 +1,6 @@
-from flask import Blueprint, Response, request, current_app, jsonify
+from flask import Blueprint, request, jsonify
 from app.database.wrapper import Database
-from app.util import emit_event
+from app.socket import socketio
 
 deviceRouter = Blueprint('device', __name__)
 
@@ -10,8 +10,10 @@ def index(): return '👀 wat u lookin for m8'
 
 @deviceRouter.route('/device/create', methods=['POST'])
 def create_device():
-    # TODO: implement create device route
-    pass
+    created = Database.add_device(**request.json)
+    
+    socketio.emit('device:create', created.toDict())
+    return jsonify(created.toDict()), 201
 
 
 @deviceRouter.route('/device/<deviceId>/update', methods=['POST'])
