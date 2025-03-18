@@ -12,7 +12,8 @@ def index(): return '👀 wat u lookin for m8'
 def create_device():
     body = request.json
     Database.add_device(**body)
-    return jsonify(body), 201
+    created = Database.add_device(**body)
+    return jsonify(created.toDict()), 201
 
 
 @deviceRouter.route('/device/<deviceId>', methods=['PATCH'])
