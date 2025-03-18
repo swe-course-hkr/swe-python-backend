@@ -11,7 +11,6 @@ def index(): return '👀 wat u lookin for m8'
 @deviceRouter.route('/device/create', methods=['POST'])
 def create_device():
     body = request.json
-    Database.add_device(**body)
     created = Database.add_device(**body)
     return jsonify(created.toDict()), 201
 
