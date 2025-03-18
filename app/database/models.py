@@ -71,7 +71,7 @@ class DeviceModel(db.Model):
 
     @validates("status")
     def validate_status(self, key, status):
-        if (not status) or (status not in (True, False)):
+        if status not in (True, False):
             raise ValueError("Status can only be True or False")
         return status
 
