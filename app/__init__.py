@@ -31,8 +31,12 @@ def create_app():
         "sqlite:///project.db"
     )
 
-    CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
-
-    app.register_blueprint(sse, url_prefix='/events')
+    CORS(
+        app,
+        resources={
+            r"/*": {"origins": ["http://localhost:3000", "*"]}
+        },
+        supports_credentials=True
+    )
 
     return app
