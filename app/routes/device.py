@@ -10,23 +10,28 @@ def index(): return '👀 wat u lookin for m8'
 
 @deviceRouter.route('/device/create', methods=['POST'])
 def create_device():
-    created = Database.add_device(**request.json)
-    
+    body = request.json
+    created = Database.add_device(**body)
     socketio.emit('device:create', created.toDict())
+
     return jsonify(created.toDict()), 201
 
 
-@deviceRouter.route('/device/<deviceId>/update', methods=['POST'])
+@deviceRouter.route('/device/<deviceId>', methods=['PATCH'])
 def update_device(deviceId):
     body = request.json
     updated_row = Database.update_device(deviceId, **body)
-    return jsonify({ "data": updated_row.toDict() })
+    return jsonify({ "data": updated_row.toDict() }), 201
 
 
-@deviceRouter.route('/device/<deviceId>/delete', methods=['POST'])
+@deviceRouter.route('/device/<deviceId>', methods=['DELETE'])
 def delete_device(deviceId):
-    # TODO: implement delete device route
-    pass
+    deleted_count = Database.remove_device(deviceId)
+    
+    if deleted_count > 0:
+        return jsonify({"message": "Device deleted successfully", "ID": deviceId}), 200
+    else:
+        return jsonify({"error": "Device not found"}), 404
 
 
 @deviceRouter.route('/logs', methods=['GET'])
