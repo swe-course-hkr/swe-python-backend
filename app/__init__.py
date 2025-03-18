@@ -13,15 +13,15 @@ def create_app():
 
     app.secret_key = os.environ.get("SECRET_APP_KEY")
 
-    if (("REDIS_HOST" not in os.environ) or ("REDIS_HOST" == "")):
-        print("REDIS_HOST not found. Using default --> 127.0.0.1")
+    # if (("REDIS_HOST" not in os.environ) or ("REDIS_HOST" == "")):
+    #     print("REDIS_HOST not found. Using default --> 127.0.0.1")
     
-    if (("REDIS_PORT" not in os.environ) or ("REDIS_PORT" == "")):
-        print("REDIS_PORT not found. Using default --> 6379")
+    # if (("REDIS_PORT" not in os.environ) or ("REDIS_PORT" == "")):
+    #     print("REDIS_PORT not found. Using default --> 6379")
 
-    app.config['REDIS_URL'] = (
-        f"redis://{os.environ.get('REDIS_HOST', '127.0.0.1')}:{os.environ.get('REDIS_PORT', 6379)}"
-    )
+    # app.config['REDIS_URL'] = (
+    #     f"redis://{os.environ.get('REDIS_HOST', '127.0.0.1')}:{os.environ.get('REDIS_PORT', 6379)}"
+    # )
 
     if (("SQLALCHEMY_DATABASE_URI" not in os.environ) or ("SQLALCHEMY_DATABASE_URI" == "")):
         print("SQLALCHEMY_DATABASE_URI not found. Using default --> sqlite:///project.db")
