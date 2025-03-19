@@ -21,17 +21,20 @@ def create_device():
 def update_device(deviceId):
     body = request.json
     updated_row = Database.update_device(deviceId, **body)
+    socketio.emit('device:update', updated_row.toDict())
+
     return jsonify({ "data": updated_row.toDict() }), 201
 
 
 @deviceRouter.route('/device/<deviceId>', methods=['DELETE'])
 def delete_device(deviceId):
     deleted_count = Database.remove_device(deviceId)
-    
+    socketio.emit('device:delete', { "device_id": deviceId })
+
     if deleted_count > 0:
-        return jsonify({"message": "Device deleted successfully", "ID": deviceId}), 200
-    else:
-        return jsonify({"error": "Device not found"}), 404
+        return jsonify({ "message": "Device deleted successfully" }), 200
+
+    return jsonify({ "error": "Device not found" }), 404
 
 
 @deviceRouter.route('/logs', methods=['GET'])
