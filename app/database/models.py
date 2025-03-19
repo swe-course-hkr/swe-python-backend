@@ -99,8 +99,8 @@ class DeviceModel(db.Model):
             "value": self.value,
             "status": self.status,
             "description": self.description,
-            "modified_at": self.modified_at,
-            "created_at": self.created_at
+            "modified_at": self.modified_at.isoformat(),
+            "created_at": self.created_at.isoformat()
         }
 
 
