@@ -1,5 +1,18 @@
-from flask_sse import sse
+from flask import jsonify
 
-def emit_event(app, eventType, data):
-    with app.app_context():
-        sse.publish(data, type=eventType)
+
+def successResponse(data=None, statusCode=200):
+    return jsonify({
+        "data": data,
+        "error": None
+    }), statusCode
+
+
+def errorResponse(error=None, statusCode=401):
+    return jsonify({
+        "data": None,
+        "error": {
+            "message": error,
+            "code": statusCode
+        }
+    }), statusCode

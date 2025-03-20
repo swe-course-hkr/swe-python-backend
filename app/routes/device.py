@@ -1,6 +1,7 @@
 from flask import Blueprint, request, jsonify
 from app.database.wrapper import Database
 from app.socket import socketio
+from app.util import successResponse, errorResponse
 
 deviceRouter = Blueprint('device', __name__)
 
@@ -10,7 +11,7 @@ def index(): return '👀 wat u lookin for m8'
 
 @deviceRouter.route('/device/all', methods=['GET'])
 def get_all_devices():
-    return jsonify({
+    return successResponse(data={
         'devices': [device.toDict() for device in Database.fetch_all_devices()]
     })
 
@@ -21,7 +22,10 @@ def create_device():
     created = Database.add_device(**body)
     socketio.emit('device:create', created.toDict())
 
-    return jsonify(created.toDict()), 201
+    return successResponse(
+        data = created.toDict(),
+        statusCode = 201
+    )
 
 
 @deviceRouter.route('/device/<deviceId>', methods=['PATCH'])
@@ -30,7 +34,10 @@ def update_device(deviceId):
     updated_row = Database.update_device(deviceId, **body)
     socketio.emit('device:update', updated_row.toDict())
 
-    return jsonify({ "data": updated_row.toDict() }), 201
+    return successResponse(
+        data = updated_row.toDict(),
+        statusCode = 201
+    )
 
 
 @deviceRouter.route('/device/<deviceId>', methods=['DELETE'])
@@ -39,13 +46,16 @@ def delete_device(deviceId):
     socketio.emit('device:delete', { "device_id": deviceId })
 
     if deleted_count > 0:
-        return jsonify({ "message": "Device deleted successfully" }), 200
+        return successResponse()
 
-    return jsonify({ "error": "Device not found" }), 404
+    return errorResponse(
+        error = "Device not found",
+        statusCode = 404
+    )
 
 
 @deviceRouter.route('/logs', methods=['GET'])
 def get_logs():
-    return jsonify({
+    return successResponse(data={
         'logs': [log.toDict() for log in Database.fetch_logs()]
     })
