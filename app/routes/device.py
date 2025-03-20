@@ -8,6 +8,13 @@ deviceRouter = Blueprint('device', __name__)
 def index(): return '👀 wat u lookin for m8'
 
 
+@deviceRouter.route('/device/all', methods=['GET'])
+def get_all_devices():
+    return jsonify({
+        'devices': [device.toDict() for device in Database.fetch_all_devices()]
+    })
+
+
 @deviceRouter.route('/device/create', methods=['POST'])
 def create_device():
     body = request.json

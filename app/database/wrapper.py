@@ -64,3 +64,8 @@ class Database:
 
         db.session.commit()
         return count
+
+
+    def fetch_all_devices():
+        devices = db.session.query(DeviceModel).all()
+        return devices
