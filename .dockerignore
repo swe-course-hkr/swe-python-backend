@@ -1,0 +1,6 @@
+.env.copy
+.env
+README.md
+.gitignore
+__pychache__
+ERD.png

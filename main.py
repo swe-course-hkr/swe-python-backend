@@ -3,11 +3,12 @@ from app.routes.device import deviceRouter
 from app import create_app
 from app.database import db
 from app.socket import socketio
+import eventlet
 
 load_dotenv()
 
 app = create_app()
-socketio.init_app(app)
+socketio.init_app(app, async_mode='eventlet')
 
 db.init_app(app)
 
@@ -28,4 +29,11 @@ def client_disconnect(reason):
 
 
 if __name__ == '__main__':
-    socketio.run(app)
+    socketio.run(
+        app, 
+        allow_unsafe_werkzeug=True, 
+        debug=True, 
+        host="0.0.0.0", 
+        port=5000
+    )
+

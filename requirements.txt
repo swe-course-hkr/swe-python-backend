@@ -6,3 +6,4 @@ Flask-SQLAlchemy
 redis
 APScheduler
 python-dotenv
+eventlet
