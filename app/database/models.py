@@ -30,6 +30,11 @@ class DeviceModel(db.Model):
         default=0.00
     )
 
+    pin: Mapped[int] = mapped_column(
+        nullable=False,
+        default= None
+    )
+
     status: Mapped[bool] = mapped_column(
         nullable=False,
         default=False
@@ -52,7 +57,7 @@ class DeviceModel(db.Model):
 
 
     def __init__(self, **kwargs):
-        required_fields = ["name", "type"]
+        required_fields = ["name", "type","pin"]
 
         for field in required_fields:
             if field not in kwargs:
@@ -90,6 +95,11 @@ class DeviceModel(db.Model):
             raise ValueError("Value cannot be empty or negative")
         return value
 
+    @validates("pin")
+    def validate_value(self, key, pin):
+        if (not pin) or (pin == None):
+            raise ValueError("pin_allocation cannot be empty or None")
+        return pin
 
     def toDict(self):
         return {
@@ -97,6 +107,7 @@ class DeviceModel(db.Model):
             "name": self.name,
             "type": self.type,
             "value": self.value,
+            "pin":self.pin,
             "status": self.status,
             "description": self.description,
             "modified_at": self.modified_at.isoformat(),
