@@ -18,19 +18,19 @@ class UserModel(db.Model):
         super().__init__(**kwargs)
 
     @validates("username")
-    def validate_name(self, key, username):
+    def validate_username(self, key, username):
         if not username or username == "":
             raise ValueError("Username cannot be empty")
         return username
 
     @validates("email")
-    def validate_name(self, key, email):
+    def validate_email(self, key, email):
         if not email or email == "":
             raise ValueError("Email cannot be empty")
         return email
     
     @validates("password")
-    def validate_name(self, key, password):
+    def validate_password(self, key, password):
         if not password or password == "":
             raise ValueError("Password cannot be empty")
         return password
