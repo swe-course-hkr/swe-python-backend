@@ -14,7 +14,15 @@ class UserDatabase:
         return db.session.query(UserModel).filter(UserModel.id == user_id).first()
 
 
-    # TODO: Create method done By AC
+    def create_user(**kwargs):
+        try:
+            new_user = UserModel(**kwargs)
+            db.session.add(new_user)
+            db.session.commit()
+        except ValueError as e:
+            raise e
+        
+        return new_user
 
 
 
