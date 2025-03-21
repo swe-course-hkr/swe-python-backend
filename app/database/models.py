@@ -34,6 +34,14 @@ class UserModel(db.Model):
         if not password or password == "":
             raise ValueError("Password cannot be empty")
         return password
+    
+    def toDict(self):
+        return {
+            "id": self.id,
+            "username": self.username,
+            "email": self.email,
+            "password": self.password
+        }
 
 
 class DeviceModel(db.Model):
