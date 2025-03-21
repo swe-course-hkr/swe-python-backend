@@ -29,4 +29,13 @@ def fetch_all():
         'users': [users.toDict() for users in UserDatabase.fetch()]
     })
 
-# TODO: Create route done By AC
+@userRouter.route('/user',methods=["POST"])
+def create_user():
+    body = request.json
+    new_user = UserDatabase.create_user(**body)
+    socketio.emit('user:create', new_user.toDict())
+    
+    return successResponse(
+        data = new_user.toDict(),
+        statusCode = 201
+    )
