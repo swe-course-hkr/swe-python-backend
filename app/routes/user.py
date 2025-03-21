@@ -26,7 +26,7 @@ def update_details(userID):
 @userRouter.route('/users',methods=["GET"])
 def update_email():
     return successResponse(data={
-        'devices': [users.toDict() for users in UserDatabase.fetch()]
+        'users': [users.toDict() for users in UserDatabase.fetch()]
     })
 
 # TODO: Create route done By AC
