@@ -29,7 +29,7 @@ def fetch_all():
         'users': [users.toDict() for users in UserDatabase.fetch()]
     })
 
-@userRouter.route('/user',methods=["POST"])
+@userRouter.route('/user/register',methods=["POST"])
 def create_user():
     body = request.json
     new_user = UserDatabase.create_user(**body)
