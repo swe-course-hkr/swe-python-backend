@@ -15,3 +15,10 @@ class UserDatabase:
 
 
     # TODO: Create method done By AC
+
+
+
+    # for debugging purposes
+    def fetch():
+        users = db.session.query(UserModel).all()
+        return users
