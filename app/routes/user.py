@@ -24,7 +24,7 @@ def update_details(userID):
     )
 
 @userRouter.route('/users',methods=["GET"])
-def update_email():
+def fetch_all():
     return successResponse(data={
         'users': [users.toDict() for users in UserDatabase.fetch()]
     })
