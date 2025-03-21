@@ -32,9 +32,15 @@ def create_device():
 def update_device(deviceId):
     body = request.json
     updated_row = Database.update_device(deviceId, **body)
-    socketio.emit('device:update', updated_row.toDict())
 
-    return successResponse(
+    if updated_row is None:
+        return errorResponse(
+        error = "Device not found",
+        statusCode = 404
+    )
+    else:
+        socketio.emit('device:update', updated_row.toDict())
+        return successResponse(
         data = updated_row.toDict(),
         statusCode = 201
     )
