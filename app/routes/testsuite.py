@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify
 from app.database.wrapper import Database
+from app.database.userWrapper import UserDatabase
 from app.socket import socketio
 from app.util import successResponse, errorResponse
 
@@ -20,7 +21,10 @@ def index():
 def newUser():
     form = UserForm()
     if form.validate_on_submit():
-        pass
+        print("creating new user...")
+        new_user = UserDatabase.create_user(username=form.username.data,email=form.email.data,password=form.password.data)
+        
+        return redirect('/')
 
     return render_template('user.html', title='Create new user',crudAction='New',form=form)
 
@@ -29,7 +33,11 @@ def newUser():
 def newDevice():
     form = DeviceForm()
     if form.validate_on_submit():
-        pass
+        print("create new device...")
+        new_device = Database.add_device(name=form.devicename.data,type=form.devicetype.data,description=form.description.data)
+
+        return redirect('/')
+        
 
     return render_template('device.html', title='Create new device',crudAction='New',form=form)
 
