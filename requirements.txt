@@ -7,4 +7,4 @@ redis
 APScheduler
 python-dotenv
 eventlet
-flask_wtf
+Flask-WTF
