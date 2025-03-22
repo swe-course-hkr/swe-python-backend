@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>{{ crudAction }} user</h1>
+<form action="" method="post">
+  {{ form.hidden_tag() }}
+
+  <table>
+    <tr>
+      <th>{{ form.username.label }}</th>
+      <th>{{ form.username(size=32) }}</th>
+      <th>
+        {% for error in form.username.errors %}
+        <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
+      </th>
+    </tr>
+    <tr>
+      <th>{{ form.email.label }}</th>
+      <th>{{ form.email(size=32) }}</th>
+      <th>
+        {% for error in form.email.errors %}
+        <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
+      </th>
+    </tr>
+
+    <tr>
+      <th>{{ form.password.label }}</th>
+      <th>{{ form.password(size=32) }}</th>
+      <th>
+        {% for error in form.password.errors %}
+        <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
+      </th>
+    </tr>
+
+  </table>
+  <p>{{ form.submit() }}</p>
+</form>
+{% endblock %}

@@ -3,10 +3,27 @@ from app.database.wrapper import Database
 from app.socket import socketio
 from app.util import successResponse, errorResponse
 
+
+from app.routes.forms import UserForm
+from flask import render_template, redirect, flash
+
 deviceRouter = Blueprint('device', __name__)
 
 @deviceRouter.route('/')
-def index(): return '👀 wat u lookin for m8'
+def index(): 
+    print("gek")
+    user = {"username": 'aap'}
+    return render_template('index.html', title='Home',user=user)
+
+
+@deviceRouter.route('/user/newuser', methods=['GET', 'POST'])
+def login():
+    print("gek2")
+    form = UserForm()
+    if form.validate_on_submit():
+        pass
+
+    return render_template('user.html', title='user',crudAction='New',form=form)
 
 
 @deviceRouter.route('/device/all', methods=['GET'])
