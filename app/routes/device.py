@@ -1,11 +1,48 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, current_app
 from app.database.wrapper import Database
 from app.socket import socketio
 from app.util import successResponse, errorResponse
-
+import serial.tools.list_ports
 
 from app.routes.forms import UserForm
 from flask import render_template, redirect, flash
+import threading
+
+def command():
+    socketio.emit('device:update', {'id':1}, namespace="/")
+
+running = False
+
+def ser():
+
+    global running
+    if running == True:
+        return
+    else:
+        running = True
+        
+
+    print("serial running")
+    ports = serial.tools.list_ports.comports()
+    serialInst = serial.Serial()
+
+    portList = []
+
+    for oneport in ports:
+        portList.append(str(oneport))
+        print(str(oneport))
+
+    serialInst.baudrate = 9600
+    serialInst.port = "COM4"
+    serialInst.open()
+
+    while True:
+        socketio.sleep(0)
+        if serialInst.in_waiting:
+            packet = serialInst.readline() # reads all the incoming bytes
+            print(packet.decode('utf'))
+            command()
+            
 
 deviceRouter = Blueprint('device', __name__)
 
