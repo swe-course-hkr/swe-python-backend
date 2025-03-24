@@ -1,12 +1,9 @@
-from flask import Blueprint, request, jsonify, current_app
+from flask import Blueprint, request, jsonify
 from app.database.wrapper import Database
 from app.socket import socketio
 from app.util import successResponse, errorResponse
 import serial.tools.list_ports
-
-from app.routes.forms import UserForm
 from flask import render_template, redirect, flash
-import threading
 
 def command():
     socketio.emit('device:update', {'id':1}, namespace="/")
@@ -21,7 +18,6 @@ def ser():
     else:
         running = True
         
-
     print("serial running")
     ports = serial.tools.list_ports.comports()
     serialInst = serial.Serial()
@@ -51,7 +47,6 @@ def index():
     print("gek")
     user = {"username": 'aap'}
     return render_template('index.html', title='Home',user=user)
-
 
 
 @deviceRouter.route('/device/all', methods=['GET'])
