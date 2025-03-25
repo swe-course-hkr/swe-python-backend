@@ -8,3 +8,4 @@ APScheduler
 python-dotenv
 eventlet
 Flask-WTF
+pyserial
