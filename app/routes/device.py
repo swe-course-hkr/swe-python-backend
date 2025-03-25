@@ -6,7 +6,7 @@ import serial.tools.list_ports
 from flask import render_template, redirect, flash
 
 def command(command):
-    socketio.emit('device:update', {'command':command}, namespace="/")
+    socketio.emit('device:update', {'device message':command}, namespace="/")
 
 running = False
 
