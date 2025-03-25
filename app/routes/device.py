@@ -7,7 +7,6 @@ from flask import render_template, redirect, flash
 import sys
 import glob
 
-
 serialInst = serial.Serial()
 
 def command(command):
@@ -25,14 +24,11 @@ def serial_ports():
     """
     if sys.platform.startswith('win'):
         ports = serial.tools.list_ports.comports()
-        print("comports:", ports)
 
         ports = [str(p) for p in ports if "CP210x" in str(p)]
-        print("filter:", ports)
 
         if len(ports) > 0:
             ports = [ports[0].split("-")[0].strip()]
-            print("final:", ports)
 
     elif sys.platform.startswith('linux') or sys.platform.startswith('cygwin'):
         # this excludes your current terminal "/dev/tty"
@@ -75,9 +71,7 @@ def ser():
     if len(pols) == 0:
         print("list empty")
         return
-    print(pols[0])
 
-    print(pols)
     serialInst.port = pols[0]
     serialInst.open()
 
