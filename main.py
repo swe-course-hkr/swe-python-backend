@@ -46,10 +46,6 @@ def client_disconnect(reason):
 
 
 if __name__ == '__main__':
-
-    '''threading.Thread(
-        target=ser, daemon=True
-    ).start()'''
     
     socketio.run(
         app, 
