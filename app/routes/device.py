@@ -5,6 +5,8 @@ from app.util import successResponse, errorResponse
 import serial.tools.list_ports
 from flask import render_template, redirect, flash
 
+serialInst = serial.Serial()
+
 def command(command):
     socketio.emit('device:update', {'device message':command}, namespace="/")
 
@@ -20,7 +22,6 @@ def ser():
         
     print("serial running")
     ports = serial.tools.list_ports.comports()
-    serialInst = serial.Serial()
 
     portList = []
 
@@ -29,7 +30,7 @@ def ser():
         print(str(oneport))
 
     serialInst.baudrate = 9600
-    serialInst.port = "COM4"
+    serialInst.port = "COM3"
     serialInst.open()
 
     while True:
@@ -105,3 +106,10 @@ def get_logs():
     return successResponse(data={
         'logs': [log.toDict() for log in Database.fetch_logs()]
     })
+
+
+@socketio.on('device:update')
+def received(data):
+    print(data)
+    serialInst.write(str(data).encode('utf-8'))
+    
