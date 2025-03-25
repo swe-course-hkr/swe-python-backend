@@ -1,13 +1,19 @@
 from dotenv import load_dotenv
-from app.routes.device import deviceRouter
+from app.routes.device import deviceRouter, ser
 from app.routes.user import userRouter
 from app.routes.testsuite import testSuiteRouter
 from app import create_app
 from app.database import db
 from app.socket import socketio
 import eventlet
+import threading
+from threading import Lock
+
 
 load_dotenv()
+
+thread = None
+thread_lock = Lock()
 
 app = create_app()
 socketio.init_app(app, async_mode='eventlet')
@@ -25,6 +31,14 @@ app.register_blueprint(testSuiteRouter)
 def client_connect(auth):
     print("client: ", auth)
 
+    global thread
+
+    with thread_lock:
+        if thread is None:
+            thread = socketio.start_background_task(
+                target=ser
+            )
+
 
 @socketio.on('disconnect')
 def client_disconnect(reason):
@@ -32,6 +46,7 @@ def client_disconnect(reason):
 
 
 if __name__ == '__main__':
+    
     socketio.run(
         app, 
         allow_unsafe_werkzeug=True, 
@@ -39,4 +54,6 @@ if __name__ == '__main__':
         host="0.0.0.0", 
         port=5000
     )
+    
+    
 
