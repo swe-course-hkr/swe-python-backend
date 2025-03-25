@@ -5,8 +5,8 @@ from app.util import successResponse, errorResponse
 import serial.tools.list_ports
 from flask import render_template, redirect, flash
 
-def command():
-    socketio.emit('device:update', {'id':1}, namespace="/")
+def command(command):
+    socketio.emit('device:update', {'command':command}, namespace="/")
 
 running = False
 
@@ -37,7 +37,7 @@ def ser():
         if serialInst.in_waiting:
             packet = serialInst.readline() # reads all the incoming bytes
             print(packet.decode('utf'))
-            command()
+            command(packet.decode('utf').strip('\n'))
             
 
 deviceRouter = Blueprint('device', __name__)
