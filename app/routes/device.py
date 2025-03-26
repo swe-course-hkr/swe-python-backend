@@ -57,13 +57,6 @@ def ser():
         running = True
         
     print("serial running")
-    ports = serial.tools.list_ports.comports()
-
-    portList = []
-
-    for oneport in ports:
-        portList.append(str(oneport))
-        print(str(oneport))
 
     pols = serial_ports()
     serialInst.baudrate = 9600
