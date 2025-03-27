@@ -4,11 +4,49 @@ from app.socket import socketio
 from app.util import successResponse, errorResponse
 import serial.tools.list_ports
 from flask import render_template, redirect, flash
+import sys
+import glob
+
+serialInst = serial.Serial()
 
 def command(command):
     socketio.emit('device:update', {'device message':command}, namespace="/")
 
 running = False
+
+def serial_ports():
+    """ Lists serial port names
+
+        :raises EnvironmentError:
+            On unsupported or unknown platforms
+        :returns:
+            A list of the serial ports available on the system
+    """
+    if sys.platform.startswith('win'):
+        ports = serial.tools.list_ports.comports()
+
+        ports = [str(p) for p in ports if "CP210x" in str(p)]
+
+        if len(ports) > 0:
+            ports = [ports[0].split("-")[0].strip()]
+
+    elif sys.platform.startswith('linux') or sys.platform.startswith('cygwin'):
+        # this excludes your current terminal "/dev/tty"
+        ports = glob.glob('/dev/tty[A-Za-z]*')
+    elif sys.platform.startswith('darwin'):
+        ports = glob.glob('/dev/tty.*')
+    else:
+        raise EnvironmentError('Unsupported platform')
+
+    result = []
+    for port in ports:
+        try:
+            s = serial.Serial(port)
+            s.close()
+            result.append(port)
+        except (OSError, serial.SerialException):
+            pass
+    return result
 
 def ser():
 
@@ -19,17 +57,15 @@ def ser():
         running = True
         
     print("serial running")
-    ports = serial.tools.list_ports.comports()
-    serialInst = serial.Serial()
 
-    portList = []
-
-    for oneport in ports:
-        portList.append(str(oneport))
-        print(str(oneport))
-
+    pols = serial_ports()
     serialInst.baudrate = 9600
-    serialInst.port = "COM4"
+
+    if len(pols) == 0:
+        print("list empty")
+        return
+
+    serialInst.port = pols[0]
     serialInst.open()
 
     while True:
@@ -105,3 +141,10 @@ def get_logs():
     return successResponse(data={
         'logs': [log.toDict() for log in Database.fetch_logs()]
     })
+
+
+@socketio.on('device:update')
+def received(data):
+    print(data)
+    serialInst.write(str(data).encode('utf-8'))
+    
