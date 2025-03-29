@@ -80,8 +80,7 @@ deviceRouter = Blueprint('device', __name__)
 
 @deviceRouter.route('/')
 def index(): 
-    print("gek")
-    user = {"username": 'aap'}
+    user = {"username": 'kalle'}
     return render_template('index.html', title='Home',user=user)
 
 
@@ -128,7 +127,7 @@ def delete_device(deviceId):
     socketio.emit('device:delete', { "device_id": deviceId })
 
     if deleted_count > 0:
-        return successResponse()
+        return successResponse(statusCode=200)
 
     return errorResponse(
         error = "Device not found",

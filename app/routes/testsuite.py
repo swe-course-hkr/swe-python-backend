@@ -14,6 +14,7 @@ testSuiteRouter = Blueprint('testsuite', __name__)
 @testSuiteRouter.route('/')
 def index(): 
     user = {"username": 'aap'}
+    print("test")
     return render_template('index.html', title='Home',user=user)
 
 #create new user
