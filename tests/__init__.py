@@ -19,8 +19,6 @@ def app():
         "TESTING": True,
     })
 
-    # other setup can go here
-    app = create_app()
     socketio.init_app(app, async_mode='eventlet')
 
     db.init_app(app)
@@ -32,8 +30,6 @@ def app():
     app.register_blueprint(userRouter)
 
     yield app
-
-    # clean up / reset resources here
 
 
 @pytest.fixture()
