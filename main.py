@@ -1,7 +1,6 @@
 from dotenv import load_dotenv
 from app.routes.device import deviceRouter, ser
 from app.routes.user import userRouter
-from app.routes.testsuite import testSuiteRouter
 from app import create_app
 from app.database import db
 from app.socket import socketio
@@ -25,7 +24,6 @@ with app.app_context():
 
 app.register_blueprint(deviceRouter)
 app.register_blueprint(userRouter)
-app.register_blueprint(testSuiteRouter)
 
 @socketio.on('connect')
 def client_connect(auth):
