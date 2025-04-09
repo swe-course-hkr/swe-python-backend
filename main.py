@@ -43,6 +43,7 @@ def client_disconnect(reason):
     print('Client disconnected, reason:', reason)
 
 
+# running the app (testing commits on shared branches)
 if __name__ == '__main__':
     
     socketio.run(
