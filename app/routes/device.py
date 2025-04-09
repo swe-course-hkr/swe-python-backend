@@ -80,7 +80,7 @@ deviceRouter = Blueprint('device', __name__)
 
 @deviceRouter.route('/')
 def index(): 
-    return "what are you looking ay"
+    return "what are you looking at"
 
 
 @deviceRouter.route('/device/all', methods=['GET'])
