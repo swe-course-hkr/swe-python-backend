@@ -25,8 +25,7 @@ class UserDatabase:
         return new_user
 
 
-
-    # for debugging purposes
-    def fetch():
-        users = db.session.query(UserModel).all()
-        return users
+    def getUserById(user_id: int):
+        return db.session.query(UserModel)   \
+            .filter(UserModel.id == user_id) \
+            .first()

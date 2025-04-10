@@ -1,9 +1,48 @@
-from flask import Blueprint, request
+from flask import Blueprint, request, g
 from app.database.userWrapper import UserDatabase
 from app.socket import socketio
-from app.util import successResponse, errorResponse
+from app.util import (
+    successResponse,
+    errorResponse,
+    JsonWebToken,
+    Middleware
+)
 
 userRouter = Blueprint('user', __name__)
+
+@userRouter.route('/user/login', methods=["POST"])
+def user_login():
+    loginData = request.json
+
+    # TODO:
+    # Before sending the JWT,
+    # check that user is in our db
+    # and credentials are correct
+
+    # when successful, jwt should be
+    # sent back to the user in response body
+    jwt = JsonWebToken.generateJWT({
+        "user_id": 1,
+        "role": "bodadiz"
+    })
+
+    return successResponse(data={ "token": jwt })
+
+
+@userRouter.route('/user/normal', methods=["GET"])
+@Middleware.validateJWT
+def user_normal():
+    print("tokenPayload: ", g.get("tokenPayload"))
+    return successResponse()
+
+
+@userRouter.route('/user/admin', methods=["GET"])
+@Middleware.validateJWT
+@Middleware.requiredRole("admin")
+def user_admin():
+    print("tokenPayload: ", g.get("tokenPayload"))
+    return successResponse()
+
 
 @userRouter.route('/user/<userID>',methods=["PATCH"])
 def update_details(userID):
