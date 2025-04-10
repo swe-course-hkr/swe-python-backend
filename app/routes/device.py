@@ -11,9 +11,7 @@ deviceRouter = Blueprint('device', __name__)
 
 @deviceRouter.route('/')
 def index(): 
-    print("gek")
-    user = {"username": 'aap'}
-    return render_template('index.html', title='Home',user=user)
+    return "what are you looking at"
 
 
 @deviceRouter.route('/device/all', methods=['GET'])
