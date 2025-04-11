@@ -25,7 +25,7 @@ class UserDatabase:
         return new_user
 
 
-    def get_user_by_id_method(userID):
+    def get_user_by_id(userID):
         try:
             user = db.session\
             .query(UserModel)\
