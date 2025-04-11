@@ -16,6 +16,7 @@ def index():
 
 @deviceRouter.route('/device/all', methods=['GET'])
 def get_all_devices():
+    print(request.cookies.get("refreshToken"))
     return successResponse(data={
         'devices': [device.toDict() for device in Database.fetch_all_devices()]
     })

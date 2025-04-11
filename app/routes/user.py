@@ -1,4 +1,4 @@
-from flask import Blueprint, request, g
+from flask import Blueprint, request, make_response, g
 from app.database.userWrapper import UserDatabase
 from app.socket import socketio
 from app.util import (
@@ -14,19 +14,36 @@ userRouter = Blueprint('user', __name__)
 def user_login():
     loginData = request.json
 
-    # TODO:
-    # Before sending the JWT,
-    # check that user is in our db
-    # and credentials are correct
+    if "username" not in loginData: return errorResponse("Username missing")
+    if "password" not in loginData: return errorResponse("Password missing")
 
-    # when successful, jwt should be
-    # sent back to the user in response body
-    jwt = JsonWebToken.generateJWT({
-        "user_id": 1,
+    print(loginData)
+    user = UserDatabase.getUserByUsername(loginData.get("username"))
+
+    # TODO: gonna have to verify against encrypted password later
+    if not user: # or not (user.password == loginData.password):
+        return errorResponse("Wrong username or password")
+
+    tokenData = {
+        "user_id": user.id,
+        "username": user.username,
         "role": "bodadiz"
-    })
+    }
 
-    return successResponse(data={ "token": jwt })
+    accessToken = JsonWebToken.generateAccessToken(tokenData)
+    refreshToken = JsonWebToken.generateRefreshToken(tokenData)
+
+    response = make_response(successResponse(data={
+        "accessToken": accessToken
+    }))
+
+    response.set_cookie(
+        key="refreshToken",
+        value=refreshToken,
+        httponly=True,
+        partitioned=True
+    )
+    return response
 
 
 @userRouter.route('/user/normal', methods=["GET"])
