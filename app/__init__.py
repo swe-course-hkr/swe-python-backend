@@ -37,18 +37,18 @@ def create_app():
 
 
 def checkJWTtokens():
-    TOKENS = ["JWT_ACCESS_TOKEN", "JWT_REFRESH_TOKEN"]
+    jwtSecrets = ["JWT_ACCESS_SECRET", "JWT_REFRESH_SECRET"]
     ROOT_DIR = os.path.dirname(os.path.abspath(__file__)) + "/.."
 
-    for token in TOKENS:
-        variableExists = token in os.environ
+    for jwtSecret in jwtSecrets:
+        variableExists = jwtSecret in os.environ
 
-        if variableExists and len(os.environ.get(token)) > 0:
-            print(f" 🟢 — {token} found.")
+        if variableExists and len(os.environ.get(jwtSecret)) > 0:
+            print(f" 🟢 — {jwtSecret} found.")
             continue
 
-        print(f" 🔴 — {token} not found. Generating new ...")
-        newToken = secrets.token_hex(32)
-        os.environ[token] = newToken
-        set_key(dotenv_path=ROOT_DIR + "/.env", key_to_set=token, value_to_set=newToken)
-        print(f" 🟢 — Generated new {token}")
+        print(f" 🔴 — {jwtSecret} not found. Generating new ...")
+        newJwtSecret = secrets.token_hex(32)
+        os.environ[jwtSecret] = newJwtSecret
+        set_key(dotenv_path=ROOT_DIR + "/.env", key_to_set=jwtSecret, value_to_set=newJwtSecret)
+        print(f" 🟢 — Generated new {jwtSecret}")

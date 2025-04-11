@@ -1,7 +1,7 @@
 import os
 import jwt
 import time
-from flask import jsonify, request, current_app, g
+from flask import jsonify, request, g
 
 from enum import Enum
 from functools import wraps
@@ -26,23 +26,27 @@ def errorResponse(error=None, statusCode=401):
 
 
 class JsonWebToken():
-    def generateJWT(payload: dict):
+    def generateAccessToken(payload: dict):
         return jwt.encode(
             {
                 **payload,
                 "exp": JsonWebToken.__nextExpirationTime()
             },
-            os.environ.get("SECRET_APP_KEY"),
+            os.environ.get("JWT_ACCESS_SECRET"),
             algorithm="HS256"
         )
 
 
-    def decode(token):
-        return jwt.decode(
-            token,
-            current_app.config["SECRET_KEY"],
-            algorithms=["HS256"]
-        )
+    def generateRefreshToken(payload: dict):
+        return jwt.encode(payload, os.environ.get("JWT_REFRESH_SECRET"), algorithm="HS256")
+
+
+    def verifyAccessToken(token):
+        return jwt.decode(token, os.environ.get["JWT_ACCESS_SECRET"], algorithms=["HS256"])
+
+
+    def decodeRefreshToken(token):
+        return jwt.decode(token, os.environ.get["JWT_REFRESH_SECRET"], algorithms=["HS256"])
 
 
     def __nextExpirationTime():
@@ -65,13 +69,9 @@ class Middleware:
                 return errorResponse("Authentication token missing", 401)
 
             try:
-                payload = JsonWebToken.decode(token)
+                payload = JsonWebToken.verifyAccessToken(token)
 
-                if (
-                    (not payload.get("role")) or
-                    (not payload.get("user_id")) or
-                    (UserDatabase.getUserById(payload["user_id"]) is None)
-                ):
+                if (not payload.get("role")) or (not payload.get("user_id")):
                     return errorResponse("Invalid Authentication token", 401)
 
                 # NOTE:
