@@ -93,18 +93,3 @@ class Middleware:
             return f(*args, **kwargs)
 
         return decorated
-
-
-    def requiredRole(requiredRole):
-        def decorator(f):
-            def decorated(*args, **kwargs):
-                payload = g.get("tokenPayload")
-
-                if (payload is None) or (payload.get("role") is not requiredRole):
-                    return errorResponse("Access Forbidden", 403)
-
-                f(*args, **kwargs)
-
-            return decorated
-
-        return decorator

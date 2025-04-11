@@ -36,14 +36,6 @@ def user_normal():
     return successResponse()
 
 
-@userRouter.route('/user/admin', methods=["GET"])
-@Middleware.validateJWT
-@Middleware.requiredRole("admin")
-def user_admin():
-    print("tokenPayload: ", g.get("tokenPayload"))
-    return successResponse()
-
-
 @userRouter.route('/user/<userID>',methods=["PATCH"])
 def update_details(userID):
 
