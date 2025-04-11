@@ -62,7 +62,7 @@ class Middleware:
                 token = request.headers["Authorization"]
 
             if not token:
-                return errorResponse(error="Authentication token missing", statusCode=401)
+                return errorResponse("Authentication token missing", 401)
 
             try:
                 payload = JsonWebToken.decode(token)
@@ -72,25 +72,23 @@ class Middleware:
                     (not payload.get("user_id")) or
                     (UserDatabase.getUserById(payload["user_id"]) is None)
                 ):
-                    return errorResponse(
-                        error="Invalid Authentication token",
-                        statusCode=401
-                    )
+                    return errorResponse("Invalid Authentication token", 401)
 
+                # NOTE:
+                # the "g" is a global object to store data for current request
+                # when current request is processed, this object is cleared
                 g.tokenPayload = payload
 
             except jwt.ExpiredSignatureError:
-                return errorResponse(error="Token expired", statusCode=401)
+                # TODO: we should write these errors' details in logs 
+                return errorResponse("Token Expired", 401)
 
             except jwt.InvalidTokenError:
-                return errorResponse(error="Invalid Token", statusCode=401)
-
-            except jwt.InvalidIssuedAtError:
-                return errorResponse(error="Invalid IA Time", statusCode=401)
+                return errorResponse("Invalid Token", 401)
 
             except jwt.PyJWKError as e:
                 print(e)
-                return errorResponse(error="Unexpected error occured", statusCode=500)
+                return errorResponse("Unexpected error occured", 500)
 
             return f(*args, **kwargs)
 
@@ -103,11 +101,8 @@ class Middleware:
                 payload = g.get("tokenPayload")
 
                 if (payload is None) or (payload.get("role") is not requiredRole):
-                    return errorResponse(
-                        error="Access Forbidden",
-                        statusCode=403
-                    )
-                
+                    return errorResponse("Access Forbidden", 403)
+
                 f(*args, **kwargs)
 
             return decorated
