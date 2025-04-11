@@ -42,7 +42,7 @@ class UserModel(db.Model):
             "username": self.username,
             "email": self.email,
             "password": self.password,
-            "status": self.status
+            "isOnline": self.status
         }
 
 
