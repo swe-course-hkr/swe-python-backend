@@ -42,7 +42,7 @@ def create_user():
 
 @userRouter.route('/users/<userID>')
 def get_user(userID):
-    user = UserDatabase.get_user_by_id_method(userID)
+    user = UserDatabase.get_user_by_id(userID)
 
     if user is None:
         return errorResponse(
