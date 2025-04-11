@@ -30,19 +30,25 @@ class JsonWebToken():
         return jwt.encode(
             {
                 **payload,
-                # (i)ssued-(a)t: seconds-since-epoch
-                "iat": int(time.time())
+                "exp": JsonWebToken.__nextExpirationTime()
             },
             os.environ.get("SECRET_APP_KEY"),
             algorithm="HS256"
         )
-    
+
 
     def decode(token):
         return jwt.decode(
             token,
             current_app.config["SECRET_KEY"],
             algorithms=["HS256"]
+        )
+
+
+    def __nextExpirationTime():
+        return (
+            int(time.time()) +
+            int(os.environ.get("JWT_LIFETIME_SECONDS", 60))
         )
 
 
