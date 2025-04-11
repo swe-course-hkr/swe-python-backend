@@ -25,6 +25,15 @@ class UserDatabase:
         return new_user
 
 
+    def get_user_by_id(userID):
+        try:
+            user = db.session\
+            .query(UserModel)\
+            .filter(UserModel.id == userID)\
+            .first()
+            return user
+        except ValueError as e:
+            print(e)
 
     # for debugging purposes
     def fetch():
