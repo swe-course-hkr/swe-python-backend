@@ -7,7 +7,7 @@ class UserModel(db.Model):
     username: Mapped[str] = mapped_column(unique=True, nullable=False)
     email: Mapped[str] = mapped_column(unique=True, nullable=False)
     password: Mapped[str]
-    status: Mapped[bool] = mapped_column(default=False)
+    isOnline: Mapped[bool] = mapped_column(default=False)
 
     def __init__(self, **kwargs):
         required_fields = ["username", "email"]
