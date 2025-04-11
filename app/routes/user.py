@@ -39,3 +39,15 @@ def create_user():
         data = new_user.toDict(),
         statusCode = 201
     )
+
+@userRouter.route('/users/<userID>')
+def get_user(userID):
+    user = UserDatabase.get_user_by_id_method(userID)
+
+    if user is None:
+        return errorResponse(
+        error = "User not found",
+        statusCode = 404
+    )
+
+    return successResponse(data= user.toDict())
