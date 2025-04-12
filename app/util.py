@@ -37,7 +37,13 @@ class JsonWebToken():
 
 
     def generateRefreshToken(payload: dict):
-        return jwt.encode(payload, os.environ.get("JWT_REFRESH_SECRET"), algorithm="HS256")
+        return jwt.encode(
+            {
+                **payload, "iat": int(time.time())
+            },
+            os.environ.get("JWT_REFRESH_SECRET"),
+            algorithm="HS256"
+        )
 
 
     def verifyAccessToken(token):
