@@ -1,9 +1,7 @@
 import os
 import jwt
 import time
-from flask import jsonify, request, g, make_response
-
-from enum import Enum
+from flask import jsonify, request, g
 from functools import wraps
 from app.database.userWrapper import UserDatabase
 from app.database.wrapper import Database

@@ -1,5 +1,4 @@
 from app.database.models import UserModel
-from datetime import datetime
 from app.database import db
 
 class UserDatabase:
