@@ -57,7 +57,7 @@ class JsonWebToken():
 
 
 class Middleware:
-    def validateJWT(f):
+    def verifyAccessToken(f):
         @wraps(f)
         def decorated(*args, **kwargs):
             token = None

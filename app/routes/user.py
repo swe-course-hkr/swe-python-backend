@@ -47,7 +47,7 @@ def user_login():
 
 
 @userRouter.route('/user/normal', methods=["GET"])
-@Middleware.validateJWT
+@Middleware.verifyAccessToken
 def user_normal():
     print("tokenPayload: ", g.get("tokenPayload"))
     return successResponse()
