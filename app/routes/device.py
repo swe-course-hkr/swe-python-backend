@@ -10,7 +10,7 @@ import glob
 deviceRouter = Blueprint('device', __name__)
 
 @deviceRouter.route('/')
-def index(): 
+def index():
     return "what are you looking at"
 
 
