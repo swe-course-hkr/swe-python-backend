@@ -135,7 +135,7 @@ class Middleware:
             if "username" not in loginData: return errorResponse("Username missing")
             if "password" not in loginData: return errorResponse("Password missing")
 
-            user = UserDatabase.getUserByUsername(loginData.get("username"))
+            user = UserDatabase.get_user_by_username(loginData.get("username"))
 
             # TODO: gonna have to verify against encrypted password later
             if not user: # or not (user.password == loginData.password):

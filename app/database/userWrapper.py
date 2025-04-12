@@ -25,7 +25,7 @@ class UserDatabase:
         return new_user
 
 
-    def getUserById(user_id: int):
-        return db.session.query(UserModel)   \
-            .filter(UserModel.id == user_id) \
+    def get_user_by_username(username: str):
+        return db.session.query(UserModel) \
+            .filter(UserModel.username == username) \
             .first()
