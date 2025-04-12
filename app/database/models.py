@@ -8,8 +8,8 @@ class UserModel(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
     username: Mapped[str] = mapped_column(unique=True, nullable=False)
     email: Mapped[str] = mapped_column(unique=True, nullable=False)
-    password: Mapped[str]
     _password: Mapped[str] = mapped_column("password", String, nullable=False)
+    isOnline: Mapped[bool] = mapped_column(default=False)
 
     def __init__(self, **kwargs):
         required_fields = ["username", "email"]
@@ -52,14 +52,14 @@ class UserModel(db.Model):
         if not password or password == "":
             raise ValueError("Password cannot be empty")
         return password
-    
+
     def toDict(self):
         return {
             "id": self.id,
             "username": self.username,
             "email": self.email,
             "password": self.password,
-            "isOnline": self.status
+            "isOnline": self.isOnline
         }
 
 
