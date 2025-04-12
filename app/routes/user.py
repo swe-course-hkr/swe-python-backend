@@ -17,7 +17,7 @@ def user_login(user):
     tokenData = {
         "user_id": user.id,
         "username": user.username,
-        "role": "bodadiz"
+        "role": "user"
     }
 
     accessToken = JsonWebToken.generateAccessToken(tokenData)
