@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify
 from app.database.wrapper import Database
 from app.socket import socketio
-from app.util import successResponse, errorResponse
+from app.util import successResponse, errorResponse, Middleware
 import serial.tools.list_ports
 from flask import render_template, redirect, flash
 import sys
@@ -23,6 +23,7 @@ def get_all_devices():
 
 
 @deviceRouter.route('/device/create', methods=['POST'])
+@Middleware.verifyAccessToken
 def create_device():
     body = request.json
     created = Database.add_device(**body)
@@ -53,6 +54,7 @@ def update_device(deviceId):
 
 
 @deviceRouter.route('/device/<deviceId>', methods=['DELETE'])
+@Middleware.verifyAccessToken
 def delete_device(deviceId):
     deleted_count = Database.remove_device(deviceId)
     socketio.emit('device:delete', { "device_id": deviceId })
