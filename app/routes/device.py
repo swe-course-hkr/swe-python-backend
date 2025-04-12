@@ -1,9 +1,8 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request
 from app.database.wrapper import Database
 from app.socket import socketio
 from app.util import successResponse, errorResponse, Middleware
 import serial.tools.list_ports
-from flask import render_template, redirect, flash
 import sys
 import glob
 
