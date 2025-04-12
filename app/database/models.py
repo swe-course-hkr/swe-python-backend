@@ -1,12 +1,14 @@
 from sqlalchemy.orm import Mapped, mapped_column, validates
+from sqlalchemy.types import String
 from app.database import db
 from datetime import datetime
+from werkzeug.security import generate_password_hash, check_password_hash
 
 class UserModel(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
     username: Mapped[str] = mapped_column(unique=True, nullable=False)
     email: Mapped[str] = mapped_column(unique=True, nullable=False)
-    password: Mapped[str]
+    _password: Mapped[str] = mapped_column("password", String, nullable=False)
     isOnline: Mapped[bool] = mapped_column(default=False)
 
     def __init__(self, **kwargs):
@@ -17,6 +19,21 @@ class UserModel(db.Model):
                 raise ValueError(f"Missing required field: {field}")
 
         super().__init__(**kwargs)
+
+
+    @property
+    def password(self):
+        return self._password
+
+
+    @password.setter
+    def password(self, password):
+        self._password = generate_password_hash(password)
+
+
+    def password_matches(self, plain_password):
+        return check_password_hash(self._password, plain_password)
+
 
     @validates("username")
     def validate_username(self, key, username):
@@ -35,14 +52,14 @@ class UserModel(db.Model):
         if not password or password == "":
             raise ValueError("Password cannot be empty")
         return password
-    
+
     def toDict(self):
         return {
             "id": self.id,
             "username": self.username,
             "email": self.email,
             "password": self.password,
-            "isOnline": self.status
+            "isOnline": self.isOnline
         }
 
 
@@ -155,3 +172,25 @@ class LogModel(db.Model):
             "created_at": self.created_at.isoformat(),
             "level": self.level
         }
+
+
+class RefreshTokenModel(db.Model):
+    token: Mapped[str] = mapped_column(primary_key=True)
+    isActive: Mapped[bool] = mapped_column(
+        nullable=False,
+        default=True
+    )
+
+
+    def __init__(self, **kwargs):
+        if "token" not in kwargs:
+            raise ValueError(f"Missing required field: token")
+
+        super().__init__(**kwargs)
+
+
+    def validateToken(self, key, token):
+        if len(token) == 0:
+            raise ValueError(f"Invalid Token")
+
+        return token

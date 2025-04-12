@@ -9,7 +9,7 @@ import threading
 from threading import Lock
 
 
-load_dotenv()
+load_dotenv(override=True)
 
 thread = None
 thread_lock = Lock()

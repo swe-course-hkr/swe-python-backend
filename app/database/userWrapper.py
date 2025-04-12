@@ -1,5 +1,4 @@
 from app.database.models import UserModel
-from datetime import datetime
 from app.database import db
 
 class UserDatabase:
@@ -25,6 +24,12 @@ class UserDatabase:
         return new_user
 
 
+    def get_user_by_username(username: str):
+        return db.session.query(UserModel) \
+            .filter(UserModel.username == username) \
+            .first()
+
+
     def get_user_by_id(userID):
         try:
             user = db.session\
@@ -34,6 +39,7 @@ class UserDatabase:
             return user
         except ValueError as e:
             print(e)
+
 
     # for debugging purposes
     def fetch():

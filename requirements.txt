@@ -9,3 +9,4 @@ python-dotenv
 eventlet
 Flask-WTF
 pyserial
+pyjwt

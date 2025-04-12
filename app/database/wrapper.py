@@ -1,5 +1,5 @@
 from sqlalchemy import select
-from app.database.models import LogModel, DeviceModel
+from app.database.models import LogModel, DeviceModel, RefreshTokenModel
 from datetime import datetime
 from app.database import db
 
@@ -69,3 +69,28 @@ class Database:
     def fetch_all_devices():
         devices = db.session.query(DeviceModel).all()
         return devices
+
+
+    def create_refresh_token(token):
+        try:
+            newToken = RefreshTokenModel(token=token)
+            db.session.add(newToken)
+            db.session.commit()
+        except ValueError as e:
+            raise e
+
+        return newToken
+
+
+    def refresh_token_is_active(token):
+        t = db.session.query(RefreshTokenModel)\
+            .filter(RefreshTokenModel.token == token)\
+            .first()
+
+        return (t is not None) and t.isActive
+
+
+    def update_refresh_token(token, **kwargs):
+        db.session.query(RefreshTokenModel)\
+            .filter(RefreshTokenModel.token == token)\
+            .update(kwargs)
