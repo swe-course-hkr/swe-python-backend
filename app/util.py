@@ -1,11 +1,12 @@
 import os
 import jwt
 import time
-from flask import jsonify, request, g
+from flask import jsonify, request, g, make_response
 
 from enum import Enum
 from functools import wraps
 from app.database.userWrapper import UserDatabase
+from app.database.wrapper import Database
 
 
 def successResponse(data=None, statusCode=200):
@@ -89,6 +90,72 @@ class Middleware:
             except jwt.PyJWKError as e:
                 print(e)
                 return errorResponse("Unexpected error occured", 500)
+
+            return f(*args, **kwargs)
+
+        return decorated
+
+
+    def verifyRefreshToken(f):
+        @wraps(f)
+        def decorated(*args, **kwargs):
+            refreshToken = request.cookies.get("refreshToken")
+
+            if (
+                not refreshToken or
+                len(refreshToken) == 0 or
+                not Database.refresh_token_is_active(refreshToken)
+            ):
+                return errorResponse("Token expired", 401)
+
+            try:
+                payload = JsonWebToken.decodeRefreshToken(refreshToken)
+                g.refreshTokenPayload = payload
+
+            except jwt.ExpiredSignatureError:
+                return errorResponse("Token Expired", 401)
+
+            except jwt.InvalidTokenError:
+                return errorResponse("Invalid Token", 401)
+
+            except jwt.PyJWKError as e:
+                print(e)
+                return errorResponse("Unexpected error occured", 500)
+
+            return f(*args, **kwargs)
+
+        return decorated
+
+
+    def verifyLoginData(f):
+        @wraps(f)
+        def decorated(*args, **kwargs):
+            loginData = request.json
+
+            if "username" not in loginData: return errorResponse("Username missing")
+            if "password" not in loginData: return errorResponse("Password missing")
+
+            user = UserDatabase.getUserByUsername(loginData.get("username"))
+
+            # TODO: gonna have to verify against encrypted password later
+            if not user: # or not (user.password == loginData.password):
+                return errorResponse("Wrong username or password")
+
+            return f(user, *args, **kwargs)
+
+        return decorated
+
+
+    def invalidateRefreshToken(f):
+        @wraps(f)
+        def decorated(*args, **kwargs):
+            token = request.cookies.get('refreshToken')
+
+            if not token or len(token) == 0:
+                # the token is invalid already, blame Ibo :D
+                return successResponse()
+
+            Database.update_refresh_token(token, isActive=False)
 
             return f(*args, **kwargs)
 

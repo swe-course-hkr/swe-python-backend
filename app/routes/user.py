@@ -1,5 +1,6 @@
 from flask import Blueprint, request, make_response, g
 from app.database.userWrapper import UserDatabase
+from app.database.wrapper import Database
 from app.socket import socketio
 from app.util import (
     successResponse,
@@ -11,19 +12,8 @@ from app.util import (
 userRouter = Blueprint('user', __name__)
 
 @userRouter.route('/user/login', methods=["POST"])
-def user_login():
-    loginData = request.json
-
-    if "username" not in loginData: return errorResponse("Username missing")
-    if "password" not in loginData: return errorResponse("Password missing")
-
-    print(loginData)
-    user = UserDatabase.getUserByUsername(loginData.get("username"))
-
-    # TODO: gonna have to verify against encrypted password later
-    if not user: # or not (user.password == loginData.password):
-        return errorResponse("Wrong username or password")
-
+@Middleware.verifyLoginData
+def user_login(user):
     tokenData = {
         "user_id": user.id,
         "username": user.username,
@@ -43,7 +33,36 @@ def user_login():
         httponly=True,
         partitioned=True
     )
+
+    Database.create_refresh_token(refreshToken)
+
     return response
+
+
+@userRouter.route('/user/logout', methods=['POST'])
+@Middleware.invalidateRefreshToken
+def user_logout():
+    response = make_response(successResponse())
+
+    response.set_cookie(
+        key="refreshToken",
+        value="",
+        httponly=True,
+        partitioned=True,
+        expires=0
+    )
+
+    return response
+
+
+@userRouter.route('/user/token', methods=['POST'])
+@Middleware.verifyRefreshToken
+def create_new_access_token():
+    newAccessToken = JsonWebToken.generateAccessToken(g.refreshTokenPayload)
+
+    return successResponse(data={
+        "accessToken": newAccessToken
+    })
 
 
 @userRouter.route('/user/normal', methods=["GET"])
