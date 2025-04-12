@@ -42,11 +42,11 @@ class JsonWebToken():
 
 
     def verifyAccessToken(token):
-        return jwt.decode(token, os.environ.get["JWT_ACCESS_SECRET"], algorithms=["HS256"])
+        return jwt.decode(token, os.environ.get("JWT_ACCESS_SECRET"), algorithms=["HS256"])
 
 
     def decodeRefreshToken(token):
-        return jwt.decode(token, os.environ.get["JWT_REFRESH_SECRET"], algorithms=["HS256"])
+        return jwt.decode(token, os.environ.get("JWT_REFRESH_SECRET"), algorithms=["HS256"])
 
 
     def __nextExpirationTime():
