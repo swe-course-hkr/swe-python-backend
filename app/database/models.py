@@ -153,3 +153,25 @@ class LogModel(db.Model):
             "created_at": self.created_at.isoformat(),
             "level": self.level
         }
+
+
+class RefreshTokenModel(db.Model):
+    token: Mapped[str] = mapped_column(primary_key=True)
+    isActive: Mapped[bool] = mapped_column(
+        nullable=False,
+        default=True
+    )
+
+
+    def __init__(self, **kwargs):
+        if "token" not in kwargs:
+            raise ValueError(f"Missing required field: token")
+
+        super().__init__(**kwargs)
+
+
+    def validateToken(self, key, token):
+        if len(token) == 0:
+            raise ValueError(f"Invalid Token")
+
+        return token
