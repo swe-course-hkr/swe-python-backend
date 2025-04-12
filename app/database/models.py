@@ -8,6 +8,7 @@ class UserModel(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
     username: Mapped[str] = mapped_column(unique=True, nullable=False)
     email: Mapped[str] = mapped_column(unique=True, nullable=False)
+    password: Mapped[str]
     _password: Mapped[str] = mapped_column("password", String, nullable=False)
 
     def __init__(self, **kwargs):
@@ -57,7 +58,8 @@ class UserModel(db.Model):
             "id": self.id,
             "username": self.username,
             "email": self.email,
-            "password": self.password
+            "password": self.password,
+            "isOnline": self.status
         }
 
 
