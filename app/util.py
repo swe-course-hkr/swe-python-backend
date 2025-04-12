@@ -135,8 +135,7 @@ class Middleware:
 
             user = UserDatabase.get_user_by_username(loginData.get("username"))
 
-            # TODO: gonna have to verify against encrypted password later
-            if not user: # or not (user.password == loginData.password):
+            if (not user) or (not user.password_matches(loginData.get("password"))):
                 return errorResponse("Wrong username or password")
 
             return f(user, *args, **kwargs)

@@ -1,12 +1,14 @@
 from sqlalchemy.orm import Mapped, mapped_column, validates
+from sqlalchemy.types import String
 from app.database import db
 from datetime import datetime
+from werkzeug.security import generate_password_hash, check_password_hash
 
 class UserModel(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
     username: Mapped[str] = mapped_column(unique=True, nullable=False)
     email: Mapped[str] = mapped_column(unique=True, nullable=False)
-    password: Mapped[str]
+    _password: Mapped[str] = mapped_column("password", String, nullable=False)
 
     def __init__(self, **kwargs):
         required_fields = ["username", "email"]
@@ -16,6 +18,21 @@ class UserModel(db.Model):
                 raise ValueError(f"Missing required field: {field}")
 
         super().__init__(**kwargs)
+
+
+    @property
+    def password(self):
+        return self._password
+
+
+    @password.setter
+    def password(self, password):
+        self._password = generate_password_hash(password)
+
+
+    def password_matches(self, plain_password):
+        return check_password_hash(self._password, plain_password)
+
 
     @validates("username")
     def validate_username(self, key, username):

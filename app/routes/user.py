@@ -101,7 +101,7 @@ def create_user():
     body = request.json
     new_user = UserDatabase.create_user(**body)
     socketio.emit('user:create', new_user.toDict())
-    
+
     return successResponse(
         data = new_user.toDict(),
         statusCode = 201
