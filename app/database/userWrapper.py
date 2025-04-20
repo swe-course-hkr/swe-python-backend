@@ -1,5 +1,6 @@
 from app.database.models import UserModel
 from app.database import db
+from datetime import timedelta, datetime
 
 class UserDatabase:
 
@@ -45,3 +46,18 @@ class UserDatabase:
     def fetch():
         users = db.session.query(UserModel).all()
         return users
+    
+    
+    def increaseFailedLoginAttemps(user):
+        user.failed_logins += 1
+
+    
+    def setTimeout(user):
+        user.can_login_after = datetime.now() + timedelta(minutes=3)
+        user.failed_logins = 0
+    
+
+    def resetTimeout(user):
+        user.can_login_after = None
+        user.failed_logins = 0
+        db.session.commit()
