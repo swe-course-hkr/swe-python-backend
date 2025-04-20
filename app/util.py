@@ -5,6 +5,7 @@ from flask import jsonify, request, g
 from functools import wraps
 from app.database.userWrapper import UserDatabase
 from app.database.wrapper import Database
+import re
 
 """
 This contains utility functions, middlewares and JWT handling.
@@ -272,8 +273,7 @@ class Middleware:
         return decorated
     
     def verifyPasswordRules(f):
-        special_characters = "!@#$%^&*()-+?_=,<>/"
-        alhpabets = "abcdefghijklmnopqrstufwxyz"
+        pattern = r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()\-\+?_=,<>/]).{8,}$'
         @wraps(f)               
         def decorated(*args, **kwargs):
             registerData = request.json
@@ -281,16 +281,16 @@ class Middleware:
             email = registerData.get("email","")
             username = registerData.get("username","")
 
-            if not password or password == "":
+            if not password:
                 return errorResponse("Password cannot be empty", 400)
-            if len(password) < 8:
-                return errorResponse("Password must be 8 characters or more!", 400)
-            if not password or password == "":
-                return errorResponse("Password cannot be empty", 400)
-            if not any(char in special_characters for char in password):
-                return errorResponse("Password must contain a special character (!@#$%^&*()-+?_=,<>/)", 400)
-            if not any(char in alhpabets for char in password) or not any(char in alhpabets.upper() for char in password):
-                return errorResponse(" 👀  if u don't have at least one of a-z A-Z 0-9 , i keal u ", 400)
+
+
+            if not re.match(pattern, password):
+                return errorResponse(
+                    "Password must be at least 8 characters and include a-z, A-Z, 0-9, and a special character (!@#$%^&*()-+?_=,<>/)", 
+                    400
+                    )
+
             if username.lower() in password.lower() or email.lower().split("@")[0] in password.lower():
                 return errorResponse("Your password should not contain your username or email!", 400)
 
