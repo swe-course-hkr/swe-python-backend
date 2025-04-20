@@ -47,12 +47,6 @@ class UserModel(db.Model):
             raise ValueError("Email cannot be empty")
         return email
     
-    @validates("password")
-    def validate_password(self, key, password):
-        if not password or password == "":
-            raise ValueError("Password cannot be empty")
-        return password
-
     def toDict(self):
         return {
             "id": self.id,
