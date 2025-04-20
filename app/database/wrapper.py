@@ -1,3 +1,36 @@
+'''
+Database utility class for managing logs, devices, and refresh tokens in the system.
+
+Methods:
+
+fetch_logs(log_level: str = "info", user_id: int = None, device_id: int = None) -> list[LogModel]:
+Fetches logs filtered by log level, user ID, and device ID. Returns logs in descending order of creation time.
+
+write_log(log_level: str, action: str, user_id: int, device_id: int):
+Creates a new log entry with the given log level, action description, user ID, and device ID.
+
+update_device(device_id: int, **kwargs) -> DeviceModel:
+Updates fields of an existing device and refreshes its 'modified_at' timestamp. Returns the updated device object.
+
+add_device(**kwargs) -> DeviceModel:
+Creates a new device using the provided keyword arguments. Returns the newly created device.
+
+remove_device(device_id: int) -> int:
+Deletes a device by its ID. Returns the number of rows affected (0 if device not found).
+
+fetch_all_devices() -> list[DeviceModel]:
+Retrieves and returns a list of all devices in the database.
+
+create_refresh_token(token: str) -> RefreshTokenModel:
+Creates and stores a new refresh token entry in the database. Returns the created token object.
+
+refresh_token_is_active(token: str) -> bool:
+Checks if a given refresh token exists and is marked as active.
+
+update_refresh_token(token: str, **kwargs):
+Updates the refresh token record identified by the token string with provided fields.
+'''
+
 from sqlalchemy import select
 from app.database.models import LogModel, DeviceModel, RefreshTokenModel
 from datetime import datetime
