@@ -1,3 +1,21 @@
+'''
+User related routes
+
+user_login -> route for a user to login, once user is logged in 2 tokens gets created
+
+user_logout -> route to delete tokens and log user out.
+
+create_new_access_token -> middleware to create a new access token when needed
+
+update_details -> route to update user related data like password, username or email
+
+fetch_all -> route to fetch all users in the database (mostly used for debugging)
+
+create_user -> route to create a user
+
+get_user -> route to get one user based on ID
+'''
+
 from flask import Blueprint, request, make_response, g
 from app.database.userWrapper import UserDatabase
 from app.database.wrapper import Database
@@ -8,7 +26,7 @@ from app.util import (
     JsonWebToken,
     Middleware
 )
-
+''' Define a Blueprint for user-related routes '''
 userRouter = Blueprint('user', __name__)
 
 @userRouter.route('/user/login', methods=["POST"])

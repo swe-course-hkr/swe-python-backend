@@ -10,7 +10,7 @@ COPY . .
 
 ENV SECRET_APP_KEY = "6EzsDR7mCPvnwLQDLMR2n7DrSvVkEHpN"
 
-EXPOSE 5000
+EXPOSE 5001
 
 CMD ["python", "main.py"]
 
