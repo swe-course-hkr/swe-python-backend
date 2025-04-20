@@ -8,6 +8,13 @@ import eventlet
 import threading
 from threading import Lock
 
+"""
+This is the main file that starts the flask server. 
+
+It just sets up the database, routes and handles the websocket connections (to connect unit and device to each other in real time).
+
+It also runs a background task to handle communication with the device.
+"""
 
 load_dotenv(override=True)
 
@@ -27,6 +34,12 @@ app.register_blueprint(userRouter)
 
 @socketio.on('connect')
 def client_connect(auth):
+    """
+    Handles the connection of a client to the server.
+    if no background thread is running, it starts one.
+
+    auth: the authentication data of the client.
+    """
     print("client: ", auth)
 
     global thread
@@ -40,10 +53,19 @@ def client_connect(auth):
 
 @socketio.on('disconnect')
 def client_disconnect(reason):
+    """
+    Handles the disconnection of a client from the server.
+    is also prints a reason for the disconnection.
+
+    reason: the reason for the disconnection.
+    """
     print('Client disconnected, reason:', reason)
 
 
 if __name__ == '__main__':
+    """
+    Main function that runs the server.    
+    """
     
     socketio.run(
         app, 
