@@ -284,10 +284,9 @@ class Middleware:
             if not password:
                 return errorResponse("Password cannot be empty", 400)
 
-
             if not re.match(pattern, password):
                 return errorResponse(
-                    "Password must be at least 8 characters and include a-z, A-Z, 0-9, and a special character (!@#$%^&*()-+?_=,<>/)", 
+                    " 👀 if u don't have at least one of a-z A-Z 0-9 , i keal u ", 
                     400
                     )
 
