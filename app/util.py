@@ -166,7 +166,7 @@ class Middleware:
     
     def verifyPasswordRules(f):
         special_characters = "!@#$%^&*()-+?_=,<>/"
-        alhpabits = "abcdefghijklmopqrstufwxyz"
+        alhpabets = "abcdefghijklmnopqrstufwxyz"
         @wraps(f)               
         def decorated(*args, **kwargs):
             registerData = request.json
@@ -182,7 +182,7 @@ class Middleware:
                 return errorResponse("Password cannot be empty", 400)
             if not any(char in special_characters for char in password):
                 return errorResponse("Password must contain a special character (!@#$%^&*()-+?_=,<>/)", 400)
-            if not any(char in alhpabits for char in password) or not any(char in alhpabits.upper() for char in password):
+            if not any(char in alhpabets for char in password) or not any(char in alhpabets.upper() for char in password):
                 return errorResponse(" 👀  if u don't have at least one of a-z A-Z 0-9 , i keal u ", 400)
             if username.lower() in password.lower() or email.lower().split("@")[0] in password.lower():
                 return errorResponse("Your password should not contain your username or email!", 400)
