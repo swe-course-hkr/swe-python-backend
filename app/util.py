@@ -1,10 +1,12 @@
 import os
 import jwt
 import time
+from datetime import datetime, timedelta
 from flask import jsonify, request, g
 from functools import wraps
 from app.database.userWrapper import UserDatabase
 from app.database.wrapper import Database
+from app.database import db
 
 
 def successResponse(data=None, statusCode=200):
@@ -140,10 +142,27 @@ class Middleware:
             if "password" not in loginData: return errorResponse("Password missing")
 
             user = UserDatabase.get_user_by_username(loginData.get("username"))
+            if (not user): return errorResponse("Wrong username or password")
+            
+            now = datetime.now()
 
-            if (not user) or (not user.password_matches(loginData.get("password"))):
+            if user.can_login_after and now < user.can_login_after:
+                return errorResponse("you entered your last password, say goodbye 🔫", 403)
+            
+            if not user.password_matches(loginData.get("password")):
+                user.failed_logins += 1
+
+                if user.failed_logins >= 3:
+                    user.can_login_after = now + timedelta(minutes=3)
+                    user.failed_logins = 0
+
+                db.session.commit()
                 return errorResponse("Wrong username or password")
-
+            
+            user.failed_logins = 0
+            user.can_login_after = None
+            db.session.commit()
+               
             return f(user, *args, **kwargs)
 
         return decorated
@@ -163,3 +182,4 @@ class Middleware:
             return f(*args, **kwargs)
 
         return decorated
+    
