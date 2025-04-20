@@ -286,7 +286,7 @@ class Middleware:
 
             if not re.match(pattern, password):
                 return errorResponse(
-                    " 👀 if u don't have at least one of a-z A-Z 0-9 , i keal u ", 
+                    " 👀 if u don't have at least one of a-z A-Z 0-9, and a special character (!@#$%^&*()-+?_=,<>/) , i keal u ", 
                     400
                     )
 
