@@ -174,15 +174,15 @@ class Middleware:
             username = registerData.get("username","")
 
             if not password or password == "":
-                return "Password cannot be empty", 400
+                return errorResponse("Password cannot be empty", 400)
             if len(password) < 8:
-                return "Password must be 8 characters or more!"
+                return errorResponse("Password must be 8 characters or more!", 400)
             if not password or password == "":
-                return "Password cannot be empty", 400
+                return errorResponse("Password cannot be empty", 400)
             if not any(char in special_characters for char in password):
-                return "Password must contain a special character (!@#$%^&*()-+?_=,<>/)", 400
+                return errorResponse("Password must contain a special character (!@#$%^&*()-+?_=,<>/)", 400)
             if username.lower() in password.lower() or email.lower().split("@")[0] in password.lower():
-                return "Your password should not contain your username or email!", 400
+                return errorResponse("Your password should not contain your username or email!", 400)
 
             return f(*args, **kwargs)
         return decorated
