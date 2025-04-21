@@ -6,6 +6,16 @@ from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
 
 class UserModel(db.Model):
+    """
+    models for the user table in database.
+
+    attributes:
+    - id (int): primary key.
+    - username (str): unique username for the user.
+    - email (str): unique email for the user.
+    - _password (str): hashed password for the user.
+    - isOnline (bool): online status of the user.
+    """
     id: Mapped[int] = mapped_column(primary_key=True)
     username: Mapped[str] = mapped_column(unique=True, nullable=False)
     email: Mapped[str] = mapped_column(unique=True, nullable=False)
@@ -15,6 +25,12 @@ class UserModel(db.Model):
     can_login_after: Mapped[datetime] = mapped_column(DateTime, nullable=True)
 
     def __init__(self, **kwargs):
+        """
+        creates UserModel instance.
+
+        raises:
+        - ValueError: if the required fields (username and email) are not given.
+        """
         required_fields = ["username", "email"]
 
         for field in required_fields:
@@ -25,38 +41,62 @@ class UserModel(db.Model):
 
 
     @property
-    def password(self):
+    def password(self): 
+        """
+        gets the hashed password of user.
+        """
         return self._password
 
 
     @password.setter
     def password(self, password):
+        """
+        sets and hashes the password before storing it.
+
+        args:
+        - password (str): plaintext password.
+        """
         self._password = generate_password_hash(password)
 
 
     def password_matches(self, plain_password):
+        """
+        checks if plaintext password matches the stored hashed password.
+
+        args:
+        - plain_password (str): password to check.
+
+        rturns:
+        True if passwords match, False otherwise.
+        """
         return check_password_hash(self._password, plain_password)
 
 
     @validates("username")
     def validate_username(self, key, username):
+        """
+        validates the username is not empty.
+        """
         if not username or username == "":
             raise ValueError("Username cannot be empty")
         return username
 
     @validates("email")
     def validate_email(self, key, email):
+        """
+        validates the email is not empty.
+        """
         if not email or email == "":
             raise ValueError("Email cannot be empty")
         return email
     
-    @validates("password")
-    def validate_password(self, key, password):
-        if not password or password == "":
-            raise ValueError("Password cannot be empty")
-        return password
-
     def toDict(self):
+        """
+        converts the user instance to a dictionary.
+
+        returns:
+        dictionary representation of the user.
+        """
         return {
             "id": self.id,
             "username": self.username,
@@ -67,6 +107,19 @@ class UserModel(db.Model):
 
 
 class DeviceModel(db.Model):
+    """
+    model of device (sensor) in the system.
+
+    atributes:
+    - id (int): primary key.
+    - name (str): name of the device.
+    - type (str): type of the device.
+    - value (float): value associated with the device.
+    - status (bool): current state of the device (on/off).
+    - description (str): description for the device.
+    - modified_at (datetime): öast modified timestamp.
+    - created_at (datetime): created timestamp.
+    """
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(nullable=False)
     type: Mapped[str] = mapped_column(nullable=False)
@@ -98,6 +151,12 @@ class DeviceModel(db.Model):
 
 
     def __init__(self, **kwargs):
+        """
+        creates a DeviceModel instance.
+
+        raises:
+        - ValueError: if required fields are missing (name and type).
+        """
         required_fields = ["name", "type"]
 
         for field in required_fields:
@@ -110,6 +169,9 @@ class DeviceModel(db.Model):
 
     @validates("name")
     def validate_name(self, key, name):
+        """
+        validates the name is not empty.
+        """
         if not name or name == "":
             raise ValueError("Name cannot be empty")
         return name
@@ -117,6 +179,9 @@ class DeviceModel(db.Model):
 
     @validates("status")
     def validate_status(self, key, status):
+        """
+        validates status is a boolean.
+        """
         if status not in (True, False):
             raise ValueError("Status can only be True or False")
         return status
@@ -124,6 +189,9 @@ class DeviceModel(db.Model):
 
     @validates("type")
     def validate_type(self, key, type):
+        """
+        validates type is not empty.
+        """
         print("validating type...", type)
         if (not type) or (type == ""):
             raise ValueError("Type cannot be empty")
@@ -132,12 +200,24 @@ class DeviceModel(db.Model):
 
     @validates("value")
     def validate_value(self, key, value):
+        """
+        validates the value is non-negative.
+
+        rturns:
+        the validated value.
+        """
         if (not value) or (value < 0):
             raise ValueError("Value cannot be empty or negative")
         return value
 
 
     def toDict(self):
+        """
+        converts the device instance to a dictionary.
+
+        returns:
+        dictionary representation of the device.
+        """
         return {
             "id": self.id,
             "name": self.name,
@@ -151,6 +231,17 @@ class DeviceModel(db.Model):
 
 
 class LogModel(db.Model):
+    """
+    model of log entry for user actions on devices.
+
+    attributes:
+    - id (int): primary key.
+    - user_id (int): ID of user who performed the action.
+    - device_id (int): ID of the device on which action was taken.
+    - action (str): description of the action.
+    - created_at (datetime): timestamp of the action.
+    - level (str): level of access?
+    """
     id: Mapped[int] = mapped_column(primary_key=True)
     user_id: Mapped[int] = mapped_column(nullable=False)
     device_id: Mapped[int] = mapped_column(nullable=False)
@@ -167,6 +258,12 @@ class LogModel(db.Model):
     ) # or.. warning, error
 
     def toDict(self):
+        """
+        converts the log entry to a dictionary.
+
+        returns:
+        dictionary representation of the log.
+        """
         return {
             "id": self.id,
             "user_id": self.user_id,
@@ -178,6 +275,13 @@ class LogModel(db.Model):
 
 
 class RefreshTokenModel(db.Model):
+    """
+    refresh token model entry for a user session.
+
+    attributes:
+    - token (str): primary key.
+    - isActive (bool): if the token is still active.
+    """
     token: Mapped[str] = mapped_column(primary_key=True)
     isActive: Mapped[bool] = mapped_column(
         nullable=False,
@@ -186,6 +290,12 @@ class RefreshTokenModel(db.Model):
 
 
     def __init__(self, **kwargs):
+        """
+        creates a RefreshTokenModel instance.
+
+        raises:
+        - ValueError: if token is missing.
+        """
         if "token" not in kwargs:
             raise ValueError(f"Missing required field: token")
 
@@ -193,6 +303,12 @@ class RefreshTokenModel(db.Model):
 
 
     def validateToken(self, key, token):
+        """
+        validates that the token string is not empty.
+
+        returns:
+        the validated token.
+        """
         if len(token) == 0:
             raise ValueError(f"Invalid Token")
 

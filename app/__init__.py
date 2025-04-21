@@ -7,7 +7,24 @@ from flask import Flask
 from flask_cors import CORS
 from dotenv import set_key
 
+"""
+This file is responsible for creating the Flask app and configuring it.
+Sets up the database connection, JWT tokens, and CORS.
+
+Called when starting the sterver
+"""
+
 def create_app():
+    """
+    creates and configures flask.
+    - Checks if SECRET_APP_KEY exists in environment.
+    - Checks if SQLALCHEMY_DATABASE_URI exists in environment. if not, a default is used.
+    - Allows Cors so unit can talk with server
+    - calls checkJWTtokens() to make sure JTW tokens exist.
+
+    Returns:
+        app: flask app instance
+    """
     app = Flask(__name__)
 
     if (("SECRET_APP_KEY" not in os.environ) or ("SECRET_APP_KEY" == "")):
@@ -37,6 +54,11 @@ def create_app():
 
 
 def checkJWTtokens():
+    """
+    Checks if JTW token exist in environment for user authentication.
+    If they do, it will use the existing tokens.
+    if not, it will generate a new secure random token and save it to environment.
+    """
     jwtSecrets = ["JWT_ACCESS_SECRET", "JWT_REFRESH_SECRET"]
     ROOT_DIR = os.path.dirname(os.path.abspath(__file__)) + "/.."
 
