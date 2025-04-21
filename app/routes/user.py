@@ -24,7 +24,7 @@ from app.util import (
     successResponse,
     errorResponse,
     JsonWebToken,
-    Middleware
+    Middleware,
 )
 ''' Define a Blueprint for user-related routes '''
 userRouter = Blueprint('user', __name__)
@@ -115,6 +115,7 @@ def fetch_all():
     })
 
 @userRouter.route('/user/register',methods=["POST"])
+@Middleware.verifyPasswordRules
 def create_user():
     body = request.json
     new_user = UserDatabase.create_user(**body)

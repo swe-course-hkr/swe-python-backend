@@ -5,6 +5,7 @@ from flask import jsonify, request, g
 from functools import wraps
 from app.database.userWrapper import UserDatabase
 from app.database.wrapper import Database
+import re
 
 """
 This contains utility functions, middlewares and JWT handling.
@@ -269,4 +270,28 @@ class Middleware:
 
             return f(*args, **kwargs)
 
+        return decorated
+    
+    def verifyPasswordRules(f):
+        pattern = r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()\-\+?_=,<>/]).{8,}$'
+        @wraps(f)               
+        def decorated(*args, **kwargs):
+            registerData = request.json
+            password = registerData.get("password", "")
+            email = registerData.get("email","")
+            username = registerData.get("username","")
+
+            if not password:
+                return errorResponse("Password cannot be empty", 400)
+
+            if not re.match(pattern, password):
+                return errorResponse(
+                    " 👀 if u don't have at least one of a-z A-Z 0-9, and a special character (!@#$%^&*()-+?_=,<>/) , i keal u ", 
+                    400
+                    )
+
+            if username.lower() in password.lower() or email.lower().split("@")[0] in password.lower():
+                return errorResponse("Your password should not contain your username or email!", 400)
+
+            return f(*args, **kwargs)
         return decorated
