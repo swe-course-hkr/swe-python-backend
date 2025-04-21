@@ -243,10 +243,10 @@ class Middleware:
             if "password" not in loginData: return errorResponse("Password missing")
 
             user = UserDatabase.get_user_by_username(loginData.get("username"))
-            if (not user): return errorResponse("Wrong username or password")
+            if (not user): return errorResponse("Wait a minute, who are you?")
 
             if user.can_login_after and datetime.now() < user.can_login_after:
-                return errorResponse("you entered your last password, say goodbye 🔫", 403)
+                return errorResponse("You entered your last password, say goodbye 🔫", 403)
             
             if not user.password_matches(loginData.get("password")):
                 UserDatabase.increaseFailedLoginAttemps(user)
@@ -254,8 +254,7 @@ class Middleware:
                 if user.failed_logins >= 3:
                     UserDatabase.setTimeout(user)
 
-                db.session.commit()
-                return errorResponse("Wrong username or password")
+                return errorResponse("Go touch grass. You can't see the keyboard.")
             
             UserDatabase.resetTimeout(user)
                
