@@ -65,11 +65,13 @@ class UserDatabase:
     
     def increaseFailedLoginAttemps(user):
         user.failed_logins += 1
+        db.session.commit()
 
     
     def setTimeout(user):
         user.can_login_after = datetime.now() + timedelta(minutes=3)
         user.failed_logins = 0
+        db.session.commit()
     
 
     def resetTimeout(user):
