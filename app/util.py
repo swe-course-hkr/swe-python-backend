@@ -245,17 +245,16 @@ class Middleware:
             user = UserDatabase.get_user_by_username(loginData.get("username"))
             if (not user): return errorResponse("Wait a minute, who are you?")
 
-if user.can_login_after and datetime.now() < user.can_login_after:
-    nextPossibleTime = str(user.can_login_after.strftime("%m/%d/%Y, %H:%M:%S"))
-    return errorResponse("You.. shall not.. pass! (until: " + nextPossibleTime + ")", 403)
+            if user.can_login_after and datetime.now() < user.can_login_after:
+                nextPossibleTime = str(user.can_login_after.strftime("%m/%d/%Y, %H:%M:%S"))
+                return errorResponse("You.. shall not.. pass! (until: " + nextPossibleTime + ")", 403)
             
             if not user.password_matches(loginData.get("password")):
                 UserDatabase.increaseFailedLoginAttemps(user)
 
-if user.failed_logins >= 3:
-    UserDatabase.setTimeout(user)
-    return errorResponse("You entered your last password, say goodbye 🔫", 403)
-
+                if user.failed_logins >= 3:
+                    UserDatabase.setTimeout(user)
+                    return errorResponse("You entered your last password, say goodbye 🔫", 403)
                 return errorResponse("Go touch grass. You can't see the keyboard.")
             
             UserDatabase.resetTimeout(user)
