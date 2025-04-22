@@ -252,8 +252,9 @@ if user.can_login_after and datetime.now() < user.can_login_after:
             if not user.password_matches(loginData.get("password")):
                 UserDatabase.increaseFailedLoginAttemps(user)
 
-                if user.failed_logins >= 3:
-                    UserDatabase.setTimeout(user)
+if user.failed_logins >= 3:
+    UserDatabase.setTimeout(user)
+    return errorResponse("You entered your last password, say goodbye 🔫", 403)
 
                 return errorResponse("Go touch grass. You can't see the keyboard.")
             
