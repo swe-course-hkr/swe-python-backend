@@ -79,10 +79,6 @@ class UserDatabase:
         user.failed_logins = 0
         db.session.commit()
 
-    def isOnline(user):
-        user.isOnline = True
-        db.session.commit()
-
-    def isOffline(user):
-        user.isOnline = False
+    def setIsOnline(user, is_online):
+        user.isOnline = is_online
         db.session.commit()

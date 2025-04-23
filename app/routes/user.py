@@ -33,7 +33,7 @@ userRouter = Blueprint('user', __name__)
 @Middleware.verifyLoginData
 def user_login(user):
 
-    UserDatabase.isOnline(user)
+    UserDatabase.setIsOnline(user, True)
 
     tokenData = {
         "user_id": user.id,

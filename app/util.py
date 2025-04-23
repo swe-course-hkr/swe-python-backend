@@ -277,7 +277,7 @@ class Middleware:
 
             data = request.json
             user = UserDatabase.get_user_by_username(data.get("username"))
-            UserDatabase.isOffline(user)
+            UserDatabase.setIsOnline(user, False)
 
             token = request.cookies.get('refreshToken')
 
