@@ -57,7 +57,7 @@ def user_login(user):
 
     Database.create_refresh_token(refreshToken)
 
-    socketio.emit('user:statusChange', { "Username": user.username, "isOnline": user.isOnline })
+    socketio.emit('user:statusChange', { "username": user.username, "isOnline": user.isOnline })
     return response
 
 
