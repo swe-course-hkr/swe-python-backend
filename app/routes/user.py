@@ -32,6 +32,9 @@ userRouter = Blueprint('user', __name__)
 @userRouter.route('/user/login', methods=["POST"])
 @Middleware.verifyLoginData
 def user_login(user):
+
+    UserDatabase.isOnline(user)
+
     tokenData = {
         "user_id": user.id,
         "username": user.username,
@@ -54,12 +57,13 @@ def user_login(user):
 
     Database.create_refresh_token(refreshToken)
 
+    socketio.emit('user went online', { "Username": user.username, "isOnline": user.isOnline })
     return response
 
 
 @userRouter.route('/user/logout', methods=['POST'])
 @Middleware.invalidateRefreshToken
-def user_logout():
+def user_logout(user):
     response = make_response(successResponse())
 
     response.set_cookie(
@@ -70,6 +74,7 @@ def user_logout():
         expires=0
     )
 
+    socketio.emit('user went offline', { "Username": user.username, "isOnline": user.isOnline })
     return response
 
 

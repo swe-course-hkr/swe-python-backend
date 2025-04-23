@@ -274,6 +274,12 @@ class Middleware:
         """
         @wraps(f)
         def decorated(*args, **kwargs):
+
+            data = request.json
+            user = UserDatabase.get_user_by_username(data.get("username"))
+            if user.isOnline:
+                UserDatabase.isOffline(user)
+
             token = request.cookies.get('refreshToken')
 
             if not token or len(token) == 0:
@@ -282,7 +288,7 @@ class Middleware:
 
             Database.update_refresh_token(token, isActive=False)
 
-            return f(*args, **kwargs)
+            return f(user,*args, **kwargs)
 
         return decorated
     
