@@ -57,7 +57,7 @@ def user_login(user):
 
     Database.create_refresh_token(refreshToken)
 
-    socketio.emit('user went online', { "Username": user.username, "isOnline": user.isOnline })
+    socketio.emit('user:statusChange', { "Username": user.username, "isOnline": user.isOnline })
     return response
 
 
@@ -74,7 +74,7 @@ def user_logout(user):
         expires=0
     )
 
-    socketio.emit('user went offline', { "Username": user.username, "isOnline": user.isOnline })
+    socketio.emit('user:statusChange', { "Username": user.username, "isOnline": user.isOnline })
     return response
 
 
