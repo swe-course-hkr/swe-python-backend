@@ -286,7 +286,7 @@ class Middleware:
 
             Database.update_refresh_token(token, isActive=False)
 
-            return f(*args, **kwargs)
+            return f(user,*args, **kwargs)
 
         return decorated
     
