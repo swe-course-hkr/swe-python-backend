@@ -1,5 +1,6 @@
 from sqlalchemy.orm import Mapped, mapped_column, validates
 from sqlalchemy.types import String
+from sqlalchemy import DateTime
 from app.database import db
 from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -20,6 +21,8 @@ class UserModel(db.Model):
     email: Mapped[str] = mapped_column(unique=True, nullable=False)
     _password: Mapped[str] = mapped_column("password", String, nullable=False)
     isOnline: Mapped[bool] = mapped_column(default=False)
+    failed_logins: Mapped[int] = mapped_column(default=0)
+    can_login_after: Mapped[datetime] = mapped_column(DateTime, nullable=True)
 
     def __init__(self, **kwargs):
         """
