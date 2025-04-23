@@ -104,9 +104,9 @@ class Database:
         return devices
 
 
-    def create_refresh_token(token):
+    def create_refresh_token(token, username):
         try:
-            newToken = RefreshTokenModel(token=token)
+            newToken = RefreshTokenModel(token=token, username=username)
             db.session.add(newToken)
             db.session.commit()
         except ValueError as e:
@@ -127,3 +127,9 @@ class Database:
         db.session.query(RefreshTokenModel)\
             .filter(RefreshTokenModel.token == token)\
             .update(kwargs)
+        
+    def get_token(token):
+        t = db.session.query(RefreshTokenModel) \
+            .filter(RefreshTokenModel.token == token)\
+            .first()
+        return t

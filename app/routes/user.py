@@ -55,7 +55,7 @@ def user_login(user):
         partitioned=True
     )
 
-    Database.create_refresh_token(refreshToken)
+    Database.create_refresh_token(refreshToken, user.username)
 
     socketio.emit('user:statusChange', { "Username": user.username, "isOnline": user.isOnline })
     return response
