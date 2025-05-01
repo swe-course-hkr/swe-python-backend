@@ -53,8 +53,9 @@ def test_updateUser(client):
     assert response.status_code == 201
 
 
+
 #create a user with an existing username
-def test_createDoubleUser(client):
+def test_createDoubleUser(client):   
     #get users from database
     response = client.get("/users")
     strJson = response.data.decode('utf-8')
@@ -74,7 +75,6 @@ def test_createDoubleUser(client):
     strJson = response.data.decode('utf-8')  
     assert response.status_code == 500
 
-
     #check if no users were added
     response = client.get("/users")
     strJson = response.data.decode('utf-8')
@@ -82,7 +82,7 @@ def test_createDoubleUser(client):
     nrUsers1 = len(jsonResponse["data"]["users"])
 
     assert nrUsers == nrUsers1
-
+    
 
 
 

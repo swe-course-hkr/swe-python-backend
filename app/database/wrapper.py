@@ -26,13 +26,19 @@ class Database:
 
 
     def write_log(log_level: str, action: str, user_id: int, device_id: int):
-        db.session.add(LogModel(
+        try:
+            new_log = LogModel(
             level=log_level,
             action=action,
             user_id=user_id,
-            device_id=device_id
-        ))
-        db.session.commit()
+            device_id=device_id)
+            db.session.add(new_log)
+            db.session.commit()
+        except ValueError as e:
+            raise e
+        
+        return new_log
+
 
 
     def update_device(device_id: int, **kwargs) -> int:

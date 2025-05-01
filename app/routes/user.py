@@ -32,6 +32,25 @@ def fetch_all():
 @userRouter.route('/user/register',methods=["POST"])
 def create_user():
     body = request.json
+
+    new_username = body['username']
+    new_email = body['email']
+    exists = UserDatabase.userExists(new_username)
+    
+    if exists:
+        return errorResponse(
+        error = "Username already exists",
+        statusCode = 500
+    )
+
+    exists = UserDatabase.emailExists(new_email)
+    
+    if exists:
+        return errorResponse(
+        error = "Email already exists",
+        statusCode = 500
+    )  
+
     new_user = UserDatabase.create_user(**body)
     socketio.emit('user:create', new_user.toDict())
     

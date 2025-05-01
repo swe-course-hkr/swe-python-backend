@@ -30,3 +30,19 @@ class UserDatabase:
     def fetch():
         users = db.session.query(UserModel).all()
         return users
+    
+    def userExists(username):
+        user = db.session.query(UserModel).filter(UserModel.username == username).first()
+
+        if user: 
+            return True
+        else: return False
+
+    def emailExists(email):
+        user = db.session.query(UserModel).filter(UserModel.email == email).first()
+
+        if user: 
+            return True
+        else: return False
+
+

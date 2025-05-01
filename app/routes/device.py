@@ -135,6 +135,18 @@ def delete_device(deviceId):
     )
 
 
+@deviceRouter.route('/logs/create', methods=['POST'])
+def create_log():
+    body = request.json
+    created = Database.write_log(**body)
+    socketio.emit('log:create', created.toDict())
+
+    return successResponse(
+        data = created.toDict(),
+        statusCode = 201
+    )
+
+
 @deviceRouter.route('/logs', methods=['GET'])
 def get_logs():
     return successResponse(data={

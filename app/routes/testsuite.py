@@ -5,7 +5,7 @@ from app.socket import socketio
 from app.util import successResponse, errorResponse
 
 
-from app.routes.forms import UserForm, DeviceForm
+from app.routes.forms import UserForm, DeviceForm, LogForm
 from flask import render_template, redirect, flash
 
 testSuiteRouter = Blueprint('testsuite', __name__)
@@ -41,4 +41,17 @@ def newDevice():
         
 
     return render_template('device.html', title='Create new device',crudAction='New',form=form)
+
+#create new log
+@testSuiteRouter.route('/test/log/new', methods=['GET', 'POST'])
+def newLog():
+    form = LogForm()
+    if form.validate_on_submit():
+        print("create new log entry...")
+        new_device = Database.write_log(log_level=form.log_level.data,user_id=form.userid.data,device_id=form.deviceid.data,action=form.action.data)
+
+        return redirect('/')
+        
+
+    return render_template('log.html', title='Create new log entry',crudAction='New',form=form)
 
