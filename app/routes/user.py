@@ -94,13 +94,10 @@ def user_normal():
 def update_details(userID):
 
     body = request.json
-    updated = UserDatabase.update_user_details(userID, **body)
+    updated, error = UserDatabase.update_user_details(userID, **body)
 
-    if updated is None:
-        return errorResponse(
-        error = "User not found",
-        statusCode = 404
-    )
+    if error:
+        return errorResponse(error)
 
     socketio.emit('user:update', updated.toDict())
     return successResponse(
