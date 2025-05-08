@@ -118,7 +118,11 @@ def fetch_all():
 @Middleware.verifyPasswordRules
 def create_user():
     body = request.json
-    new_user = UserDatabase.create_user(**body)
+    new_user, error = UserDatabase.create_user(**body)
+
+    if error:
+        return errorResponse(error)
+
     socketio.emit('user:create', new_user.toDict())
 
     return successResponse(
