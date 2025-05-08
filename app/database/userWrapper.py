@@ -16,6 +16,7 @@ Methods:
 from app.database.models import UserModel
 from app.database import db
 from datetime import timedelta, datetime
+from sqlalchemy.exc import IntegrityError
 
 class UserDatabase:
 
@@ -35,9 +36,19 @@ class UserDatabase:
             db.session.add(new_user)
             db.session.commit()
         except ValueError as e:
-            raise e
+            return None, str(e)
+        except IntegrityError as e:
+            errorMsg = e.args[0]
+
+            if "email" in errorMsg:
+                return None, "Email is already taken."
+
+            if "username" in errorMsg:
+                return None, "Username is already taken."
+
+            return None, str(e.args[0])
         
-        return new_user
+        return new_user, None
 
 
     def get_user_by_username(username: str):
