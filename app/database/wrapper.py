@@ -127,3 +127,5 @@ class Database:
         db.session.query(RefreshTokenModel)\
             .filter(RefreshTokenModel.token == token)\
             .update(kwargs)
+
+        db.session.commit()
