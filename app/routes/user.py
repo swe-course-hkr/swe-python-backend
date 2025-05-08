@@ -91,7 +91,10 @@ def user_normal():
 
 
 @userRouter.route('/user/<userID>',methods=["PATCH"])
+@Middleware.verifyAccessToken
 def update_details(userID):
+    if not (int(g.tokenPayload["user_id"]) == int(userID)):
+        return errorResponse("You may only update your own account.", 403)
 
     body = request.json
     updated, error = UserDatabase.update_user_details(userID, **body)
