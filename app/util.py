@@ -295,6 +295,9 @@ class Middleware:
             email = registerData.get("email","")
             username = registerData.get("username","")
 
+            if not email:
+                return errorResponse("Please provide an Email!", 400)
+
             if not password:
                 return errorResponse("Password cannot be empty", 400)
 
@@ -303,9 +306,6 @@ class Middleware:
                     " 👀 if u don't have at least one of a-z A-Z 0-9, and a special character (!@#$%^&*()-+?_=,<>/) , i keal u ", 
                     400
                     )
-            
-            if not email:
-                return errorResponse("Please provide an Email!", 400)
 
             if username.lower() in password.lower() or email.lower().split("@")[0] in password.lower():
                 return errorResponse("Your password should not contain your username or email!", 400)
