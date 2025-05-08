@@ -300,6 +300,9 @@ class Middleware:
 
             if not password:
                 return errorResponse("Password cannot be empty", 400)
+            
+            if len(password) < 8:
+                return errorResponse("Password needs to be at least 8 characters long")
 
             if not re.match(pattern, password):
                 return errorResponse(
