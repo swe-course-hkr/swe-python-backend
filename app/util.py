@@ -295,6 +295,9 @@ class Middleware:
             email = registerData.get("email","")
             username = registerData.get("username","")
 
+            if not email:
+                return errorResponse("Please provide an Email!", 400)
+
             if not password:
                 return errorResponse("Password cannot be empty", 400)
 
