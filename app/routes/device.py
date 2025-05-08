@@ -64,6 +64,7 @@ def create_device():
 
 
 @deviceRouter.route('/device/<deviceId>', methods=['PATCH'])
+@Middleware.verifyAccessToken
 def update_device(deviceId):
     body = request.json
     updated_row = Database.update_device(deviceId, **body)

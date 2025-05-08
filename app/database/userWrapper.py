@@ -16,17 +16,36 @@ Methods:
 from app.database.models import UserModel
 from app.database import db
 from datetime import timedelta, datetime
+from sqlalchemy.exc import IntegrityError
 
 class UserDatabase:
 
     def update_user_details(user_id, **kwargs):
+        user = UserDatabase.get_user_by_id(user_id)
 
-        db.session.query(UserModel) \
-            .filter(UserModel.id == user_id) \
-            .update(kwargs)
+        if user is None:
+            return None, f"User with ID: {user_id} not found"
+
+        if "email" in kwargs:
+            existingUser = UserDatabase.get_user_by_email(kwargs["email"])
+            if existingUser:
+                return None, f"Email '{kwargs["email"]}' is already taken"
+
+            user.email = kwargs["email"]
+
+        if "username" in kwargs:
+            existingUser = UserDatabase.get_user_by_username(kwargs["username"])
+            if existingUser:
+                return None, f"Username '{kwargs["username"]}' is already taken"
+
+            user.username = kwargs["username"]
+
+        if "password" in kwargs:
+            user._password = kwargs["password"]
+
         db.session.commit()
 
-        return db.session.query(UserModel).filter(UserModel.id == user_id).first()
+        return user, None
 
 
     def create_user(**kwargs):
@@ -35,14 +54,30 @@ class UserDatabase:
             db.session.add(new_user)
             db.session.commit()
         except ValueError as e:
-            raise e
+            return None, str(e)
+        except IntegrityError as e:
+            errorMsg = e.args[0]
+
+            if "email" in errorMsg:
+                return None, "Email is already taken."
+
+            if "username" in errorMsg:
+                return None, "Username is already taken."
+
+            return None, str(e.args[0])
         
-        return new_user
+        return new_user, None
 
 
     def get_user_by_username(username: str):
         return db.session.query(UserModel) \
             .filter(UserModel.username == username) \
+            .first()
+    
+
+    def get_user_by_email(email: str):
+        return db.session.query(UserModel) \
+            .filter(UserModel.email == email) \
             .first()
 
 
