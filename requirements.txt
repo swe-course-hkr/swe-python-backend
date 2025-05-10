@@ -10,3 +10,4 @@ eventlet
 Flask-WTF
 pyserial
 pyjwt
+pytest-flask
