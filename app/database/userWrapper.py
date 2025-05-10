@@ -41,7 +41,7 @@ class UserDatabase:
             user.username = kwargs["username"]
 
         if "password" in kwargs:
-            user._password = kwargs["password"]
+            user.password = kwargs["password"]
 
         db.session.commit()
 
