@@ -236,7 +236,7 @@ class Middleware:
                 not Database.refresh_token_is_active(refreshToken)
             ):
                 Database.write_log(
-                    role      = "auth",
+                    role      = "system",
                     action    = "Refresh Token Expired",
                     user_id   = 0,
                     device_id = 0
