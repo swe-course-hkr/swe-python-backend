@@ -294,18 +294,19 @@ class Middleware:
 
             if "username" not in loginData: 
                 Database.write_log(
-                role      = "auth",
-                action    = "Username Missing",
-                user_id   = 0,
-                device_id = 0
+                    role      = "system",
+                    action    = "Username Missing",
+                    user_id   = 0,
+                    device_id = 0
                 )
                 return errorResponse("Username missing")
+
             if "password" not in loginData: 
                 Database.write_log(
-                role      = "auth",
-                action    = f"Password Missing for {loginData.get('username')}",
-                user_id   = 0,
-                device_id = 0
+                    role      = "system",
+                    action    = f"Password Missing for {loginData.get('username')}",
+                    user_id   = 0,
+                    device_id = 0
                 )
                 return errorResponse("Password missing")
 
