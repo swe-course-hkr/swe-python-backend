@@ -333,10 +333,10 @@ class Middleware:
             if not user.password_matches(loginData.get("password")):
                 UserDatabase.increaseFailedLoginAttemps(user)
                 Database.write_log(
-                role      = "auth",
-                action    = f"Failed login for user_id:{user.id}",
-                user_id   = user.id,
-                device_id = 0
+                    role      = "auth",
+                    action    = f"Failed login for ({user.id} {user.username})",
+                    user_id   = user.id,
+                    device_id = 0
                 )
 
                 if user.failed_logins >= 3:
