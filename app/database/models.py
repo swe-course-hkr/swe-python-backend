@@ -192,7 +192,6 @@ class DeviceModel(db.Model):
         """
         validates type is not empty.
         """
-        print("validating type...", type)
         if (not type) or (type == ""):
             raise ValueError("Type cannot be empty")
         return type
