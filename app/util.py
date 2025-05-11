@@ -322,10 +322,10 @@ class Middleware:
 
             if user.can_login_after and datetime.now() < user.can_login_after:
                 Database.write_log(
-                role      = "auth",
-                action    = f"Login blocked for {user.id}",
-                user_id   = user.id,
-                device_id = 0
+                    role      = "system",
+                    action    = f"Login blocked for ({user.id} {user.username})",
+                    user_id   = user.id,
+                    device_id = 0
                 )
                 nextPossibleTime = str(user.can_login_after.strftime("%m/%d/%Y, %H:%M:%S"))
                 return errorResponse("You.. shall not.. pass! (until: " + nextPossibleTime + ")", 403)
