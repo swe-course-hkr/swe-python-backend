@@ -26,7 +26,7 @@ ser() -> Opens a serial connection using a detected COM port and reads data cont
 received() -> SocketIO event handler that receives data from clients and writes it to the serial device.
 '''
 
-from flask import Blueprint, request
+from flask import Blueprint, request, g
 from app.database.wrapper import Database
 from app.socket import socketio
 from app.util import successResponse, errorResponse, Middleware
@@ -70,11 +70,24 @@ def update_device(deviceId):
     updated_row = Database.update_device(deviceId, **body)
 
     if updated_row is None:
+        Database.write_log(
+            role      = g.tokenPayload["role"],
+            action    = f"User {g.tokenPayload['user_id']} tried updating unknown device {deviceId}",
+            user_id   = g.tokenPayload["user_id"],
+            device_id = deviceId,
+        )
         return errorResponse(
         error = "Device not found",
         statusCode = 404
     )
     else:
+        Database.write_log(
+            role      = g.tokenPayload["role"],
+            action    = f"User {g.tokenPayload['user_id']} updated device {deviceId}",
+            user_id   = g.tokenPayload["user_id"],
+            device_id = deviceId,
+        )
+        
         socketio.emit('device:update', updated_row.toDict())
         return successResponse(
         data = updated_row.toDict(),
@@ -169,7 +182,7 @@ def ser():
     serialInst.open()
 
     while True:
-        socketio.sleep(0)
+        socketio.sleep(5000)
         if serialInst.in_waiting:
             packet = serialInst.readline() # reads all the incoming bytes
             print(packet.decode('utf'))
