@@ -29,14 +29,14 @@ class UserDatabase:
         if "email" in kwargs:
             existingUser = UserDatabase.get_user_by_email(kwargs["email"])
             if existingUser:
-                return None, f"Email '{kwargs["email"]}' is already taken"
+                return None, f"Email '{kwargs['email']}' is already taken"
 
             user.email = kwargs["email"]
 
         if "username" in kwargs:
             existingUser = UserDatabase.get_user_by_username(kwargs["username"])
             if existingUser:
-                return None, f"Username '{kwargs["username"]}' is already taken"
+                return None, f"Username '{kwargs['username']}' is already taken"
 
             user.username = kwargs["username"]
 
