@@ -196,10 +196,10 @@ class Middleware:
 
             except jwt.InvalidTokenError:
                 Database.write_log(
-                role      = "auth",
-                action    = "Invalid Token",
-                user_id   = 0,
-                device_id = 0
+                    role      = "auth",
+                    action    = "Invalid Token",
+                    user_id   = 0,
+                    device_id = 0
                 )
                 return errorResponse("Invalid Token", 401)
 
