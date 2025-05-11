@@ -1,4 +1,6 @@
 import json
+from .conftest import SAMPLE_USERS_DATA
+
 
 def test_get_users(client, with_sample_users):
     response = client.get("/users").data.decode('utf-8')
@@ -14,8 +16,9 @@ def test_get_users(client, with_sample_users):
     users = data.get("users")
     assert type(users) is list
 
-    assert len(users) > 0
+    assert len(users) == len(SAMPLE_USERS_DATA)
     print(users)
+
 
 
 #add user

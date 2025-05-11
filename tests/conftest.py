@@ -13,7 +13,7 @@ from flask.testing import FlaskClient
 
 load_dotenv()
 
-SAMPLE_USER_DATA = [
+SAMPLE_USERS_DATA = [
     { "username": "user1", "email": "email@user1.com", "password": "Password0123!" },
     { "username": "user2", "email": "email@user2.com", "password": "Password0123!" },
     { "username": "user3", "email": "email@user3.com", "password": "Password0123!" },
@@ -60,6 +60,6 @@ def _provide_app_context(app: Flask):
 def with_sample_users(app: Flask):
     with app.app_context():
         db.session.add_all([
-            UserModel(**userData) for userData in SAMPLE_USER_DATA
+            UserModel(**userData) for userData in SAMPLE_USERS_DATA
         ])
         db.session.commit()
