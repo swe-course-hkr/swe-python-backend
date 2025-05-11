@@ -29,14 +29,14 @@ class UserDatabase:
         if "email" in kwargs:
             existingUser = UserDatabase.get_user_by_email(kwargs["email"])
             if existingUser:
-                return None, f"Email '{kwargs["email"]}' is already taken"
+                return None, f"Email '{kwargs['email']}' is already taken"
 
             user.email = kwargs["email"]
 
         if "username" in kwargs:
             existingUser = UserDatabase.get_user_by_username(kwargs["username"])
             if existingUser:
-                return None, f"Username '{kwargs["username"]}' is already taken"
+                return None, f"Username '{kwargs['username']}' is already taken"
 
             user.username = kwargs["username"]
 
@@ -92,17 +92,15 @@ class UserDatabase:
             print(e)
 
 
-    # for debugging purposes
     def fetch():
-        users = db.session.query(UserModel).all()
-        return users
-    
-    
+        return db.session.query(UserModel).all()
+
+
     def increaseFailedLoginAttemps(user):
         user.failed_logins += 1
         db.session.commit()
 
-    
+
     def setTimeout(user):
         user.can_login_after = datetime.now() + timedelta(minutes=3)
         user.failed_logins = 0

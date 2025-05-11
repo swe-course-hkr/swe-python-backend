@@ -14,7 +14,7 @@ Sets up the database connection, JWT tokens, and CORS.
 Called when starting the sterver
 """
 
-def create_app():
+def create_app(initForTests=False):
     """
     creates and configures flask.
     - Checks if SECRET_APP_KEY exists in environment.
@@ -37,10 +37,13 @@ def create_app():
     if (("SQLALCHEMY_DATABASE_URI" not in os.environ) or ("SQLALCHEMY_DATABASE_URI" == "")):
         print("SQLALCHEMY_DATABASE_URI not found. Using default --> sqlite:///project.db")
 
-    app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get(
-        "DATABASE_URL",
-        "sqlite:///project.db"
-    )
+    if initForTests:
+        app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite://"
+    else:
+        app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get(
+            "DATABASE_URL",
+            "sqlite:///project.db"
+        )
 
     CORS(
         app,
