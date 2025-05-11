@@ -192,7 +192,6 @@ class DeviceModel(db.Model):
         """
         validates type is not empty.
         """
-        print("validating type...", type)
         if (not type) or (type == ""):
             raise ValueError("Type cannot be empty")
         return type
@@ -240,7 +239,7 @@ class LogModel(db.Model):
     - device_id (int): ID of the device on which action was taken.
     - action (str): description of the action.
     - created_at (datetime): timestamp of the action.
-    - level (str): level of access?
+    - role (str): role
     """
     id: Mapped[int] = mapped_column(primary_key=True)
     user_id: Mapped[int] = mapped_column(nullable=False)
@@ -252,10 +251,10 @@ class LogModel(db.Model):
         default=datetime.now
     )
 
-    level: Mapped[str] = mapped_column(
+    role: Mapped[str] = mapped_column(
         nullable=False,
-        default="info"
-    ) # or.. warning, error
+        default="user"
+    )
 
     def toDict(self):
         """
@@ -270,7 +269,7 @@ class LogModel(db.Model):
             "device_id": self.device_id,
             "action": self.action,
             "created_at": self.created_at.isoformat(),
-            "level": self.level
+            "role": self.role
         }
 
 

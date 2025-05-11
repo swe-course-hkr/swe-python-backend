@@ -136,7 +136,7 @@ class JsonWebToken():
         """
         return (
             int(time.time()) +
-            int(os.environ.get("JWT_LIFETIME_SECONDS", 60))
+            int(os.environ.get("JWT_LIFETIME_SECONDS", 600))
         )
 
 
@@ -160,12 +160,24 @@ class Middleware:
                 token = request.headers["Authorization"]
 
             if not token:
+                Database.write_log(
+                    role      = "auth",
+                    action    = "Authorization Token Missing.",
+                    user_id   = 0,
+                    device_id = 0
+                )
                 return errorResponse("Authentication token missing", 401)
 
             try:
                 payload = JsonWebToken.verifyAccessToken(token)
 
                 if (not payload.get("role")) or (not payload.get("user_id")):
+                    Database.write_log(
+                        role      = payload.get("role", "system"),
+                        action    = "Invalid Authentication Token.",
+                        user_id   = payload.get("user_id", 0),
+                        device_id = 0
+                    )
                     return errorResponse("Invalid Authentication token", 401)
 
                 # NOTE:
@@ -174,14 +186,31 @@ class Middleware:
                 g.tokenPayload = payload
 
             except jwt.ExpiredSignatureError:
-                # TODO: we should write these errors' details in logs 
+                Database.write_log(
+                    role      = payload.get("role", "system"),
+                    action    = "Token expired.",
+                    user_id   = payload.get("user_id", 0),
+                    device_id = 0
+                )
                 return errorResponse("Token Expired", 401)
 
             except jwt.InvalidTokenError:
+                Database.write_log(
+                    role      = "system",
+                    action    = "Invalid Token",
+                    user_id   = 0,
+                    device_id = 0
+                )
                 return errorResponse("Invalid Token", 401)
 
             except jwt.PyJWKError as e:
                 print(e)
+                Database.write_log(
+                    role      = "system",
+                    action    = f"Unexpected Error Occured: {e}",
+                    user_id   = 0,
+                    device_id = 0
+                )
                 return errorResponse("Unexpected error occured", 500)
 
             return f(*args, **kwargs)
@@ -206,6 +235,12 @@ class Middleware:
                 len(refreshToken) == 0 or
                 not Database.refresh_token_is_active(refreshToken)
             ):
+                Database.write_log(
+                    role      = "system",
+                    action    = "Refresh Token Expired",
+                    user_id   = 0,
+                    device_id = 0
+                )
                 return errorResponse("Token expired", 401)
 
             try:
@@ -213,13 +248,31 @@ class Middleware:
                 g.refreshTokenPayload = payload
 
             except jwt.ExpiredSignatureError:
+                Database.write_log(
+                    role      = payload.get("role", "system"),
+                    action    = "Token Expired",
+                    user_id   = payload.get("user_id", 0),
+                    device_id = 0
+                )
                 return errorResponse("Token Expired", 401)
 
             except jwt.InvalidTokenError:
+                Database.write_log(
+                    role      = "system",
+                    action    = "Invalid Token",
+                    user_id   = 0,
+                    device_id = 0
+                )
                 return errorResponse("Invalid Token", 401)
 
             except jwt.PyJWKError as e:
                 print(e)
+                Database.write_log(
+                    role      = "system",
+                    action    = f"Unexpected Error Occured: {e}",
+                    user_id   = 0,
+                    device_id = 0
+                )
                 return errorResponse("Unexpected error occured", 500)
 
             return f(*args, **kwargs)
@@ -239,25 +292,72 @@ class Middleware:
         def decorated(*args, **kwargs):
             loginData = request.json
 
-            if "username" not in loginData: return errorResponse("Username missing")
-            if "password" not in loginData: return errorResponse("Password missing")
+            if "username" not in loginData: 
+                Database.write_log(
+                    role      = "system",
+                    action    = "Username Missing",
+                    user_id   = 0,
+                    device_id = 0
+                )
+                return errorResponse("Username missing")
+
+            if "password" not in loginData: 
+                Database.write_log(
+                    role      = "system",
+                    action    = f"Password Missing for {loginData.get('username')}",
+                    user_id   = 0,
+                    device_id = 0
+                )
+                return errorResponse("Password missing")
 
             user = UserDatabase.get_user_by_username(loginData.get("username"))
-            if (not user): return errorResponse("Wait a minute, who are you?")
+            if (not user):
+                Database.write_log(
+                    role      = "system",
+                    action    = "Login attempt for unknown username",
+                    user_id   = 0,
+                    device_id = 0
+            )
+                return errorResponse("Wait a minute, who are you?")
 
             if user.can_login_after and datetime.now() < user.can_login_after:
+                Database.write_log(
+                    role      = "system",
+                    action    = f"Login blocked for ({user.id} {user.username})",
+                    user_id   = user.id,
+                    device_id = 0
+                )
                 nextPossibleTime = str(user.can_login_after.strftime("%m/%d/%Y, %H:%M:%S"))
                 return errorResponse("You.. shall not.. pass! (until: " + nextPossibleTime + ")", 403)
             
             if not user.password_matches(loginData.get("password")):
                 UserDatabase.increaseFailedLoginAttemps(user)
+                Database.write_log(
+                    role      = "system",
+                    action    = f"Failed login for ({user.id} {user.username})",
+                    user_id   = user.id,
+                    device_id = 0
+                )
 
                 if user.failed_logins >= 3:
                     UserDatabase.setTimeout(user)
+                    Database.write_log(
+                        role      = "system",
+                        action    = f"({user.id} {user.username}) locked out after 3 failed attempts",
+                        user_id   = user.id,
+                        device_id = 0
+                    )
                     return errorResponse("You entered your last password, say goodbye 🔫", 403)
+                
                 return errorResponse("Go touch grass. You can't see the keyboard.")
             
             UserDatabase.resetTimeout(user)
+            Database.write_log(
+                role      = "system",
+                action    = f"({user.id} {user.username}) logged in successfully",
+                user_id   = user.id,
+                device_id = 0
+            )
                
             return f(user, *args, **kwargs)
 

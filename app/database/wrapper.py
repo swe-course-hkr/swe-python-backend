@@ -38,14 +38,14 @@ from app.database import db
 
 class Database:
     def fetch_logs(
-        log_level: str = "info",
+        role: str = "user",
         user_id: int = None,
         device_id: int = None
     ) -> list[LogModel]:
         # TODO: implement a parameter to accept ..
         # .. date ranges (before, after, from-to)
         stmt = select(LogModel) \
-            .where(LogModel.level == log_level)
+            .where(LogModel.role == role)
         
         if (user_id):
             stmt = stmt.where(LogModel.user_id == user_id)
@@ -58,20 +58,14 @@ class Database:
         return result
 
 
-    def write_log(log_level: str, action: str, user_id: int, device_id: int):
-        try:
-            new_log = LogModel(
-            level=log_level,
+    def write_log(role: str, action: str, user_id: int, device_id: int):
+        db.session.add(LogModel(
+            role=role,
             action=action,
             user_id=user_id,
-            device_id=device_id)
-            db.session.add(new_log)
-            db.session.commit()
-        except ValueError as e:
-            raise e
-        
-        return new_log
-
+            device_id=device_id
+        ))
+        db.session.commit()
 
 
     def update_device(device_id: int, **kwargs) -> int:
