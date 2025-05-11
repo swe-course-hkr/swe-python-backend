@@ -89,8 +89,8 @@ def update_device(deviceId):
         device_id = deviceId,
     )
         
-        socketio.emit('device:update', updated_row.toDict())
-        return successResponse(
+    socketio.emit('device:update', updated_row.toDict())
+    return successResponse(
         data = updated_row.toDict(),
         statusCode = 201
     )
@@ -183,7 +183,7 @@ def ser():
     serialInst.open()
 
     while True:
-        socketio.sleep(5000)
+        socketio.sleep(0)
         if serialInst.in_waiting:
             packet = serialInst.readline() # reads all the incoming bytes
             print(packet.decode('utf'))

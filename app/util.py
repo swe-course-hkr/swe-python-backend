@@ -161,10 +161,10 @@ class Middleware:
 
             if not token:
                 Database.write_log(
-                role      = "auth",
-                action    = "Authorization Token Missing.",
-                user_id   = 0,
-                device_id = 0
+                    role      = "auth",
+                    action    = "Authorization Token Missing.",
+                    user_id   = 0,
+                    device_id = 0
                 )
                 return errorResponse("Authentication token missing", 401)
 
@@ -173,10 +173,10 @@ class Middleware:
 
                 if (not payload.get("role")) or (not payload.get("user_id")):
                     Database.write_log(
-                    role      = payload.get("role", "unknown"),
-                    action    = "Invalid Authentication Token.",
-                    user_id   = payload.get("user_id", 0),
-                    device_id = 0
+                        role      = payload.get("role", "system"),
+                        action    = "Invalid Authentication Token.",
+                        user_id   = payload.get("user_id", 0),
+                        device_id = 0
                     )
                     return errorResponse("Invalid Authentication token", 401)
 
@@ -187,7 +187,7 @@ class Middleware:
 
             except jwt.ExpiredSignatureError:
                 Database.write_log(
-                    role      = payload.get("role", "unknown"),
+                    role      = payload.get("role", "system"),
                     action    = "Token expired.",
                     user_id   = payload.get("user_id", 0),
                     device_id = 0
@@ -206,10 +206,10 @@ class Middleware:
             except jwt.PyJWKError as e:
                 print(e)
                 Database.write_log(
-                role      = "auth",
-                action    = f"Unexpected Error Occured: {e}",
-                user_id   = 0,
-                device_id = 0
+                    role      = "auth",
+                    action    = f"Unexpected Error Occured: {e}",
+                    user_id   = 0,
+                    device_id = 0
                 )
                 return errorResponse("Unexpected error occured", 500)
 
@@ -236,10 +236,10 @@ class Middleware:
                 not Database.refresh_token_is_active(refreshToken)
             ):
                 Database.write_log(
-                role      = "auth",
-                action    = "Refresh Token Expired",
-                user_id   = 0,
-                device_id = 0
+                    role      = "auth",
+                    action    = "Refresh Token Expired",
+                    user_id   = 0,
+                    device_id = 0
                 )
                 return errorResponse("Token expired", 401)
 
@@ -249,29 +249,29 @@ class Middleware:
 
             except jwt.ExpiredSignatureError:
                 Database.write_log(
-                role      = payload.get("role", "unknown"),
-                action    = "Token Expired",
-                user_id   = payload.get("user_id", 0),
-                device_id = 0
+                    role      = payload.get("role", "system"),
+                    action    = "Token Expired",
+                    user_id   = payload.get("user_id", 0),
+                    device_id = 0
                 )
                 return errorResponse("Token Expired", 401)
 
             except jwt.InvalidTokenError:
                 Database.write_log(
-                role      = "auth",
-                action    = "Invalid Token",
-                user_id   = 0,
-                device_id = 0
+                    role      = "auth",
+                    action    = "Invalid Token",
+                    user_id   = 0,
+                    device_id = 0
                 )
                 return errorResponse("Invalid Token", 401)
 
             except jwt.PyJWKError as e:
                 print(e)
                 Database.write_log(
-                role      = "auth",
-                action    = f"Unexpected Error Occured: {e}",
-                user_id   = 0,
-                device_id = 0
+                    role      = "auth",
+                    action    = f"Unexpected Error Occured: {e}",
+                    user_id   = 0,
+                    device_id = 0
                 )
                 return errorResponse("Unexpected error occured", 500)
 
@@ -313,12 +313,12 @@ class Middleware:
             user = UserDatabase.get_user_by_username(loginData.get("username"))
             if (not user):
                 Database.write_log(
-                role      = "system",
-                action    = "Login attempt for unknown username",
-                user_id   = 0,
-                device_id = 0
+                    role      = "system",
+                    action    = "Login attempt for unknown username",
+                    user_id   = 0,
+                    device_id = 0
             )
-            return errorResponse("Wait a minute, who are you?")
+                return errorResponse("Wait a minute, who are you?")
 
             if user.can_login_after and datetime.now() < user.can_login_after:
                 Database.write_log(
