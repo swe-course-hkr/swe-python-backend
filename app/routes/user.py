@@ -104,7 +104,7 @@ def update_details(userID):
     
     Database.write_log(
         role      = g.tokenPayload["role"],
-        action    = f"{g.tokenPayload["user_id"]} {g.tokenPayload["username"]} updated their account",
+        action    = f"{g.tokenPayload['user_id']} {g.tokenPayload['username']} updated their account",
         user_id   = userID,
         device_id = 0,
     )
