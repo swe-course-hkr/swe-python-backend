@@ -311,14 +311,14 @@ class Middleware:
                 return errorResponse("Password missing")
 
             user = UserDatabase.get_user_by_username(loginData.get("username"))
-            if (not user): 
+            if (not user):
                 Database.write_log(
-                role      = "auth",
+                role      = "system",
                 action    = "Login attempt for unknown username",
                 user_id   = 0,
                 device_id = 0
             )
-                return errorResponse("Wait a minute, who are you?")
+            return errorResponse("Wait a minute, who are you?")
 
             if user.can_login_after and datetime.now() < user.can_login_after:
                 Database.write_log(
