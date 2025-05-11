@@ -268,7 +268,7 @@ class Middleware:
             except jwt.PyJWKError as e:
                 print(e)
                 Database.write_log(
-                    role      = "auth",
+                    role      = "system",
                     action    = f"Unexpected Error Occured: {e}",
                     user_id   = 0,
                     device_id = 0
