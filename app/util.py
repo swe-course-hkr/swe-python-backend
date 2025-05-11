@@ -353,10 +353,10 @@ class Middleware:
             
             UserDatabase.resetTimeout(user)
             Database.write_log(
-            role      = "auth",
-            action    = f"User {user.id} logged in successfully",
-            user_id   = user.id,
-            device_id = 0
+                role      = "system",
+                action    = f"({user.id} {user.username}) logged in successfully",
+                user_id   = user.id,
+                device_id = 0
             )
                
             return f(user, *args, **kwargs)
