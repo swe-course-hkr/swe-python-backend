@@ -72,7 +72,7 @@ def update_device(deviceId):
     if updated_row is None:
         Database.write_log(
             role      = g.tokenPayload["role"],
-            action    = f"User {g.tokenPayload['user_id']} tried updating unknown device {deviceId}",
+            action    = f"{g.tokenPayload['username']} tried updating unknown device {deviceId}",
             user_id   = g.tokenPayload["user_id"],
             device_id = deviceId,
         )
@@ -84,7 +84,7 @@ def update_device(deviceId):
 
     Database.write_log(
         role      = g.tokenPayload["role"],
-        action    = f"User {g.tokenPayload['user_id']} updated device {deviceId}",
+        action    = f"{g.tokenPayload['username']} updated device {deviceId}",
         user_id   = g.tokenPayload["user_id"],
         device_id = deviceId,
     )
