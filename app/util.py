@@ -342,10 +342,10 @@ class Middleware:
                 if user.failed_logins >= 3:
                     UserDatabase.setTimeout(user)
                     Database.write_log(
-                    role      = "auth",
-                    action    = f"User {user.id} locked out after 3 failed attempts",
-                    user_id   = user.id,
-                    device_id = 0
+                        role      = "system",
+                        action    = f"({user.id} {user.username}) locked out after 3 failed attempts",
+                        user_id   = user.id,
+                        device_id = 0
                     )
                     return errorResponse("You entered your last password, say goodbye 🔫", 403)
                 
