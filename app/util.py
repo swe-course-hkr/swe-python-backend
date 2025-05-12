@@ -410,11 +410,11 @@ class Middleware:
 
                 if (not username or not email) and hasattr(g, "tokenPayload"):
                     user_id = g.tokenPayload.get("user_id")
-                if user_id:
-                    user = UserDatabase.get_user_by_id(user_id)
-                if user:
-                    username = username or user.username or ""
-                    email = email or user.email or ""
+                    if user_id:
+                        user = UserDatabase.get_user_by_id(user_id)
+                        if user:
+                            username = username or user.username or ""
+                            email = email or user.email or ""
 
                 if username.lower() in password.lower() or email.lower().split("@")[0] in password.lower():
                     return errorResponse("Your password should not contain your username or email!", 400)
