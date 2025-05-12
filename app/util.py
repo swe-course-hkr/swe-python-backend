@@ -404,7 +404,7 @@ class Middleware:
                 pattern = r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()\-\+?_=,<>/]).{8,}$'
                 if not re.match(pattern, password):
                     return errorResponse(
-                        "Password must include at least one of a-z, A-Z, 0-9, and a special character (!@#$%^&*()-+?_=,<>/).",
+                        "Password must be at least 8 characters long, include at least one of a-z, A-Z, 0-9, and a special character (!@#$%^&*()-+?_=,<>/).",
                         400
                     )
 
