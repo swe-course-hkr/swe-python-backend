@@ -398,9 +398,6 @@ class Middleware:
                         return f(*args, **kwargs)
                     return errorResponse("Password cannot be empty", 400)
 
-                if len(password) < 8:
-                    return errorResponse("Password needs to be at least 8 characters long", 400)
-
                 pattern = r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()\-\+?_=,<>/]).{8,}$'
                 if not re.match(pattern, password):
                     return errorResponse(
