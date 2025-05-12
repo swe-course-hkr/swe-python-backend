@@ -42,9 +42,9 @@ deviceRouter = Blueprint('device', __name__)
 def index():
     return "what are you looking at"
 
+
 @deviceRouter.route('/device/all', methods=['GET'])
 def get_all_devices():
-    print(request.cookies.get("refreshToken"))
     return successResponse(data={
         'devices': [device.toDict() for device in Database.fetch_all_devices()]
     })
@@ -188,10 +188,9 @@ def ser():
             packet = serialInst.readline() # reads all the incoming bytes
             print(packet.decode('utf'))
             command(packet.decode('utf').strip('\n'))
-            
+
 
 @socketio.on('device:update')
 def received(data):
     print(data)
     serialInst.write(str(data).encode('utf-8'))
-    

@@ -386,6 +386,7 @@ class Middleware:
 
         return decorated
     
+
     def validatePassword(optional=False):
         def decorator(f):
             @wraps(f)
@@ -418,6 +419,21 @@ class Middleware:
 
                 if username.lower() in password.lower() or email.lower().split("@")[0] in password.lower():
                     return errorResponse("Your password should not contain your username or email!", 400)
+            return decorated
+        return decorator
+
+
+    def validateUsername(optional=False):
+        def decorator(f):
+            @wraps(f)
+            def decorated(*args, **kwargs):
+                requestData = request.json
+                username = requestData.get("username", "")
+
+                if not username:
+                    if not optional:
+                        return errorResponse("Please provide a username", 400)
+                    return f(*args, **kwargs)
 
                 return f(*args, **kwargs)
             return decorated

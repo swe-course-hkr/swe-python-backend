@@ -93,6 +93,7 @@ def user_normal():
 @userRouter.route('/user/<userID>',methods=["PATCH"])
 @Middleware.verifyAccessToken
 @Middleware.validatePassword(optional=True)
+@Middleware.validateUsername(optional=True)
 def update_details(userID):
     if not (int(g.tokenPayload["user_id"]) == int(userID)):
         return errorResponse("You may only update your own account.", 403)
@@ -105,7 +106,7 @@ def update_details(userID):
     
     Database.write_log(
         role      = g.tokenPayload["role"],
-        action    = f"{g.tokenPayload["user_id"]} {g.tokenPayload["username"]} updated their account",
+        action    = f"{g.tokenPayload['user_id']} {g.tokenPayload['username']} updated their account",
         user_id   = userID,
         device_id = 0,
     )
@@ -123,6 +124,7 @@ def fetch_all():
 
 @userRouter.route('/user/register',methods=["POST"])
 @Middleware.validatePassword()
+@Middleware.validateUsername()
 def create_user():
     body = request.json
     new_user, error = UserDatabase.create_user(**body)
