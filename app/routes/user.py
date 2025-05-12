@@ -121,7 +121,7 @@ def fetch_all():
     })
 
 @userRouter.route('/user/register',methods=["POST"])
-@Middleware.verifyPasswordRules
+@Middleware.validatePassword(optional=False)
 def create_user():
     body = request.json
     new_user, error = UserDatabase.create_user(**body)
