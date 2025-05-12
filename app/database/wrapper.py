@@ -131,3 +131,9 @@ class Database:
             .update(kwargs)
 
         db.session.commit()
+    
+
+    def get_token(token):
+        return db.session.query(RefreshTokenModel)\
+            .filter(RefreshTokenModel.token == token)\
+            .first()
