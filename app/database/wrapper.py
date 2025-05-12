@@ -40,14 +40,14 @@ from app.database import db
 
 class Database:
     def fetch_logs(
-        log_level: str = "info",
+        role: str = "user",
         user_id: int = None,
         device_id: int = None
     ) -> list[LogModel]:
         # TODO: implement a parameter to accept ..
         # .. date ranges (before, after, from-to)
         stmt = select(LogModel) \
-            .where(LogModel.level == log_level)
+            .where(LogModel.role == role)
         
         if (user_id):
             stmt = stmt.where(LogModel.user_id == user_id)
@@ -60,9 +60,9 @@ class Database:
         return result
 
 
-    def write_log(log_level: str, action: str, user_id: int, device_id: int):
+    def write_log(role: str, action: str, user_id: int, device_id: int):
         db.session.add(LogModel(
-            level=log_level,
+            role=role,
             action=action,
             user_id=user_id,
             device_id=device_id
@@ -129,9 +129,5 @@ class Database:
         db.session.query(RefreshTokenModel)\
             .filter(RefreshTokenModel.token == token)\
             .update(kwargs)
-        
-    def get_token(token):
-        t = db.session.query(RefreshTokenModel) \
-            .filter(RefreshTokenModel.token == token)\
-            .first()
-        return t
+
+        db.session.commit()

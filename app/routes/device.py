@@ -26,7 +26,7 @@ ser() -> Opens a serial connection using a detected COM port and reads data cont
 received() -> SocketIO event handler that receives data from clients and writes it to the serial device.
 '''
 
-from flask import Blueprint, request
+from flask import Blueprint, request, g
 from app.database.wrapper import Database
 from app.socket import socketio
 from app.util import successResponse, errorResponse, Middleware
@@ -42,9 +42,9 @@ deviceRouter = Blueprint('device', __name__)
 def index():
     return "what are you looking at"
 
+
 @deviceRouter.route('/device/all', methods=['GET'])
 def get_all_devices():
-    print(request.cookies.get("refreshToken"))
     return successResponse(data={
         'devices': [device.toDict() for device in Database.fetch_all_devices()]
     })
@@ -64,18 +64,33 @@ def create_device():
 
 
 @deviceRouter.route('/device/<deviceId>', methods=['PATCH'])
+@Middleware.verifyAccessToken
 def update_device(deviceId):
     body = request.json
     updated_row = Database.update_device(deviceId, **body)
 
     if updated_row is None:
+        Database.write_log(
+            role      = g.tokenPayload["role"],
+            action    = f"{g.tokenPayload['username']} tried updating unknown device {deviceId}",
+            user_id   = g.tokenPayload["user_id"],
+            device_id = deviceId,
+        )
+
         return errorResponse(
-        error = "Device not found",
-        statusCode = 404
+            error = "Device not found",
+            statusCode = 404
+        )
+
+    Database.write_log(
+        role      = g.tokenPayload["role"],
+        action    = f"{g.tokenPayload['username']} updated device {deviceId}",
+        user_id   = g.tokenPayload["user_id"],
+        device_id = deviceId,
     )
-    else:
-        socketio.emit('device:update', updated_row.toDict())
-        return successResponse(
+        
+    socketio.emit('device:update', updated_row.toDict())
+    return successResponse(
         data = updated_row.toDict(),
         statusCode = 201
     )
@@ -173,10 +188,9 @@ def ser():
             packet = serialInst.readline() # reads all the incoming bytes
             print(packet.decode('utf'))
             command(packet.decode('utf').strip('\n'))
-            
+
 
 @socketio.on('device:update')
 def received(data):
     print(data)
     serialInst.write(str(data).encode('utf-8'))
-    

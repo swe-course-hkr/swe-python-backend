@@ -3,6 +3,8 @@ from app.routes.device import deviceRouter, ser
 from app.routes.user import userRouter
 from app import create_app
 from app.database import db
+from app.database.samples import create_users, create_devices
+from app.database.models import DeviceModel, UserModel
 from app.socket import socketio
 import eventlet
 import threading
@@ -28,6 +30,14 @@ db.init_app(app)
 
 with app.app_context():
     db.create_all()
+    if len(db.session.query(DeviceModel).all()) == 0:
+        print(" * Populating devices ...")
+        create_devices()
+    
+    if len(db.session.query(UserModel).all()) == 0:
+        print(" * Populating users ...")
+        create_users()
+
 
 app.register_blueprint(deviceRouter)
 app.register_blueprint(userRouter)

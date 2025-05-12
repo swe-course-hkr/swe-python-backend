@@ -96,17 +96,23 @@ def user_normal():
 
 
 @userRouter.route('/user/<userID>',methods=["PATCH"])
+@Middleware.verifyAccessToken
 def update_details(userID):
+    if not (int(g.tokenPayload["user_id"]) == int(userID)):
+        return errorResponse("You may only update your own account.", 403)
 
     body = request.json
-    updated = UserDatabase.update_user_details(userID, **body)
+    updated, error = UserDatabase.update_user_details(userID, **body)
 
-    if updated is None:
-        return errorResponse(
-        error = "User not found",
-        statusCode = 404
+    if error:
+        return errorResponse(error)
+    
+    Database.write_log(
+        role      = g.tokenPayload["role"],
+        action    = f"{g.tokenPayload['user_id']} {g.tokenPayload['username']} updated their account",
+        user_id   = userID,
+        device_id = 0,
     )
-
     socketio.emit('user:update', updated.toDict())
     return successResponse(
         data = updated.toDict(),
@@ -123,7 +129,11 @@ def fetch_all():
 @Middleware.verifyPasswordRules
 def create_user():
     body = request.json
-    new_user = UserDatabase.create_user(**body)
+    new_user, error = UserDatabase.create_user(**body)
+
+    if error:
+        return errorResponse(error)
+
     socketio.emit('user:create', new_user.toDict())
 
     return successResponse(
