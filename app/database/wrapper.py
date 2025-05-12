@@ -8,6 +8,7 @@ Fetches logs filtered by log level, user ID, and device ID. Returns logs in desc
 
 write_log(log_level: str, action: str, user_id: int, device_id: int):
 Creates a new log entry with the given log level, action description, user ID, and device ID.
+AC<3
 
 update_device(device_id: int, **kwargs) -> DeviceModel:
 Updates fields of an existing device and refreshes its 'modified_at' timestamp. Returns the updated device object.
@@ -26,6 +27,7 @@ Creates and stores a new refresh token entry in the database. Returns the create
 
 refresh_token_is_active(token: str) -> bool:
 Checks if a given refresh token exists and is marked as active.
+AC<3
 
 update_refresh_token(token: str, **kwargs):
 Updates the refresh token record identified by the token string with provided fields.
@@ -104,9 +106,9 @@ class Database:
         return devices
 
 
-    def create_refresh_token(token):
+    def create_refresh_token(token, username):
         try:
-            newToken = RefreshTokenModel(token=token)
+            newToken = RefreshTokenModel(token=token, username=username)
             db.session.add(newToken)
             db.session.commit()
         except ValueError as e:
@@ -129,3 +131,9 @@ class Database:
             .update(kwargs)
 
         db.session.commit()
+    
+
+    def get_token(token):
+        return db.session.query(RefreshTokenModel)\
+            .filter(RefreshTokenModel.token == token)\
+            .first()

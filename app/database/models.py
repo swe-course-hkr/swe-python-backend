@@ -286,6 +286,7 @@ class RefreshTokenModel(db.Model):
         nullable=False,
         default=True
     )
+    username: Mapped[str] = mapped_column(nullable=False)
 
 
     def __init__(self, **kwargs):

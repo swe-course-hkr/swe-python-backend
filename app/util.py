@@ -380,9 +380,17 @@ class Middleware:
                 # the token is invalid already, blame Ibo :D
                 return successResponse()
 
+            tokenData = Database.get_token(token)
+
+            if not tokenData:
+                return successResponse() # blame ibo, again :DDD
+
+            user = UserDatabase.get_user_by_username(tokenData.username)
+            UserDatabase.setIsOnline(user, False)
+
             Database.update_refresh_token(token, isActive=False)
 
-            return f(*args, **kwargs)
+            return f(user,*args, **kwargs)
 
         return decorated
     

@@ -111,3 +111,7 @@ class UserDatabase:
         user.can_login_after = None
         user.failed_logins = 0
         db.session.commit()
+
+    def setIsOnline(user, is_online):
+        user.isOnline = is_online
+        db.session.commit()
