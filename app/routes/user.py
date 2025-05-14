@@ -94,6 +94,7 @@ def user_normal():
 @Middleware.verifyAccessToken
 @Middleware.validatePassword(optional=True)
 @Middleware.validateUsername(optional=True)
+@Middleware.validateEmail(optional=True)
 def update_details(userID):
     if not (int(g.tokenPayload["user_id"]) == int(userID)):
         return errorResponse("You may only update your own account.", 403)
@@ -125,6 +126,7 @@ def fetch_all():
 @userRouter.route('/user/register',methods=["POST"])
 @Middleware.validatePassword()
 @Middleware.validateUsername()
+@Middleware.validateEmail()
 def create_user():
     body = request.json
     new_user, error = UserDatabase.create_user(**body)
