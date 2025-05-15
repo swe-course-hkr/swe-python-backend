@@ -13,14 +13,14 @@ devices = [
     {"name": 'Yellow_LED',    "type": 'LED',        "description": 'Lights in the kitchen (maybe :D)'},
     {"name": 'Buzzer',        "type": 'BUZZER',     "description": 'Boredom solution, plays bzz bzz noises.'},
     {"name": 'Relay',         "type": 'RELAY',      "description": 'I don''t know what relay is.'},
-    {"name": 'Servo',         "type": 'SERVO',      "description": 'I don''t know what servo is :/'},
+    {"name": 'Fan',           "type": 'FAN',        "description": 'Cool summer breeze.'},
+    {"name": 'Door',          "type": 'SERVO',      "description": 'Know what door is now, nedeez'},
+    {"name": 'Window',        "type": 'SERVO',      "description": 'Window is for wasp to get through and terrorize nedeez'},
     {"name": 'Gas_Sensor',    "type": 'SENSOR',     "description": 'Detects gas, in case of assassination attempts'},
     {"name": 'Photocell',     "type": 'SENSOR',     "description": 'Sends a redstone signal when it''s day time'},
     {"name": 'PIR_Sensor',    "type": 'SENSOR',     "description": 'if you move, you lose'},
     {"name": 'Soil_Humidity', "type": 'SENSOR',     "description": 'It will let you know when mars can be terraformed'},
     {"name": 'Steam_Sensor',  "type": 'SENSOR',     "description": ''},
-    {"name": 'Button',        "type": 'BUTTON',     "description": 'If you press, it sends a redstone signal.'},
-    {"name": 'LCD',           "type": 'LCD',        "description": 'Fancy pixel screen'}
 ]
 
 def create_users():
