@@ -42,3 +42,53 @@ def test_successResponse_with_data_and_code():
 
     assert "somekey" in responseData.get("data")
     assert responseData["data"]["somekey"] == "somevalue"
+
+
+def test_errorResponse():
+    response, code = errorResponse()
+
+    assert type(code) is int
+    assert code == 401
+
+    assert type(response.data) is bytes
+
+    responseData = json.loads(response.data)
+    assert type(responseData) is dict
+
+    assert "data" in responseData
+    assert "error" in responseData
+
+    assert responseData.get("data") is None
+
+    assert type(responseData.get("error")) is dict
+
+    assert "message" in responseData.get("error")
+    assert "code" in responseData.get("error")
+
+    assert responseData.get("error").get("message") is None
+    assert responseData.get("error").get("code") == 401
+
+
+def test_errorResponse_with_message_and_code():
+    response, code = errorResponse("not allowed", 403)
+
+    assert type(code) is int
+    assert code == 403
+
+    assert type(response.data) is bytes
+
+    responseData = json.loads(response.data)
+    assert type(responseData) is dict
+
+    assert "data" in responseData
+    assert "error" in responseData
+
+    assert responseData.get("data") is None
+
+    assert type(responseData.get("error")) is dict
+
+    assert "message" in responseData.get("error")
+    assert "code" in responseData.get("error")
+
+    assert responseData.get("error").get("message") == "not allowed"
+    assert responseData.get("error").get("code") == 403
