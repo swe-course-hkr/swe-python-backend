@@ -20,7 +20,7 @@ devices = [
     {"name": 'Photocell',     "type": 'SENSOR',     "description": 'Sends a redstone signal when it''s day time'},
     {"name": 'PIR_Sensor',    "type": 'SENSOR',     "description": 'if you move, you lose'},
     {"name": 'Soil_Humidity', "type": 'SENSOR',     "description": 'It will let you know when mars can be terraformed'},
-    {"name": 'Steam_Sensor',  "type": 'SENSOR',     "description": ''},
+    {"name": 'Steam_Sensor',  "type": 'SENSOR',     "description": 'Knows when your tea is ready'},
 ]
 
 def create_users():
