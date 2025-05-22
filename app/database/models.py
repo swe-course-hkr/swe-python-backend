@@ -122,6 +122,7 @@ class DeviceModel(db.Model):
     """
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(nullable=False)
+    display_name: Mapped[str] = mapped_column(nullable=False, default="")
     type: Mapped[str] = mapped_column(nullable=False)
 
     value: Mapped[float] = mapped_column(
@@ -220,6 +221,7 @@ class DeviceModel(db.Model):
         return {
             "id": self.id,
             "name": self.name,
+            "display_name": self.display_name,
             "type": self.type,
             "value": self.value,
             "status": self.status,
