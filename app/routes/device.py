@@ -28,6 +28,7 @@ received() -> SocketIO event handler that receives data from clients and writes 
 
 from flask import Blueprint, request, g
 from app.database.wrapper import Database
+from app.database.models import DeviceModel
 from app.socket import socketio
 from app.util import successResponse, errorResponse, Middleware
 import serial.tools.list_ports
@@ -66,8 +67,18 @@ def create_device():
 @deviceRouter.route('/device/<deviceId>', methods=['PATCH'])
 @Middleware.verifyAccessToken
 def update_device(deviceId):
-    body = request.json
-    updated_row = Database.update_device(deviceId, **body)
+    deviceData: DeviceModel = request.json
+    fieldsToUpdate = {}
+
+    display_name = deviceData.get('display_name')
+    description  = deviceData.get('description')
+    status       = deviceData.get('status')
+
+    if display_name: fieldsToUpdate['display_name'] = display_name
+    if description:  fieldsToUpdate['description'] = description
+    if status:       fieldsToUpdate['status'] = status
+
+    updated_row = Database.update_device(deviceId, **fieldsToUpdate)
 
     if updated_row is None:
         Database.write_log(
